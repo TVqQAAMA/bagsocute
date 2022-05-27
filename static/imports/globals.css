@@ -1,0 +1,38 @@
+img {
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -o-crisp-edges; /* Opera */
+  image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+}
+
+.icon-ok {
+  color: limegreen;
+}
+.icon-bell-alt {
+  color: gold;
+}
+.icon-fire {
+  color: orange;
+}
+
+.icon-angle-double-right {
+  color: tomato;
+}
+
+.card:hover .product-title {
+  text-decoration: underline;
+}
+
+.product-price {
+  letter-spacing: 1.1px;
+}
+
+* {
+  font-display: swap;
+}
+
+.social {
+  width: 1rem;
+  height: 1rem;
+}

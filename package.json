@@ -1,0 +1,40 @@
+{
+  "name": "shop",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "svelte-kit dev",
+    "build": "svelte-kit build",
+    "package": "svelte-kit package",
+    "preview": "svelte-kit preview",
+    "prepare": "svelte-kit sync",
+    "format": "prettier --write ./src/**/*.{js,svelte,html,ts}",
+    "lint": "eslint './src/**/*.{js,ts,svelte}'",
+    "lint:fix": "eslint --fix './src/**/*.{js,ts,svelte}'",
+    "prelint": "npm run format"
+  },
+  "devDependencies": {
+    "@stripe/stripe-js": "^1.29.0",
+    "@sveltejs/adapter-auto": "next",
+    "@sveltejs/kit": "next",
+    "eslint": "^8.15.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "prettier": "^2.6.2",
+    "prettier-plugin-svelte": "^2.7.0",
+    "svelte-stripe": "^0.0.17"
+  },
+  "type": "module",
+  "dependencies": {
+    "@splidejs/splide": "^4.0.2",
+    "@splidejs/splide-extension-grid": "^0.4.1",
+    "@sveltejs/adapter-netlify": "^1.0.0-next.58",
+    "animate.css": "^4.1.1",
+    "bcrypt": "^5.0.1",
+    "bulma-toast": "^2.4.1",
+    "cookie": "^0.5.0",
+    "dotenv": "^16.0.1",
+    "stripe": "^9.1.0",
+    "svelte": "^3.44.0"
+  }
+}
