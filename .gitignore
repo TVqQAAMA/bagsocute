@@ -9,6 +9,7 @@ node_modules
 .netlify
 stripe.exe
 /src/routes/intents/test.js
-publish.bat
+deploy.bat
+deploy_images.bat
 webp.ps1
 cwebp.exe

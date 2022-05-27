@@ -1,0 +1,82 @@
+{
+  "spiderman-hard-shell-bag": {
+    "id": "1L0dQDI4VhzYNG2AT4HaDD7b",
+    "image": ["1a.jpg", "1b.jpg"],
+    "title": "Spiderman Hard Shell Bag",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["disney"]
+  },
+  "avengers-hard-shell-bag": {
+    "id": "1L0dV3I4VhzYNG2AxnVY4NR6",
+    "image": ["2a.jpg"],
+    "title": "Avengers Hard Shell Bag",
+    "price": 9.9,
+    "qty": 1,
+    "tags": ["disney"]
+  },
+  "minnie-mouse-hard-shell": {
+    "id": "1L2UMSI4VhzYNG2AAcgUDVKR",
+    "image": ["3a.jpg"],
+    "title": "Minnie Mouse Hard Shell Bag",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["disney"]
+  },
+  "cars-hard-shell-bag": {
+    "id": "1L2UNOI4VhzYNG2A8tSpSpVU",
+    "image": ["4a.jpg"],
+    "title": "Cars Hard Shell Bag",
+    "price": 9.9,
+    "qty": 0,
+    "tags": ["disney"]
+  },
+  "cheeky-monkey-bag": {
+    "id": "1L2UOWI4VhzYNG2AjxxRAUwX",
+    "image": ["5a.jpg"],
+    "title": "Cheeky Monkey Bag",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["animals"]
+  },
+  "leon-lion-bag": {
+    "id": "1L2UQUI4VhzYNG2Aag8qBl8u",
+    "image": ["6a.jpg"],
+    "title": "Leon Lion Bag",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["animals"]
+  },
+  "panpan-panda-bag": {
+    "id": "1L2US5I4VhzYNG2AnaqiTn5J",
+    "image": ["7a.jpg"],
+    "title": "PanPan Panda Bag",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["animals"]
+  },
+  "tubby-turtle-bag": {
+    "id": "1L2UTLI4VhzYNG2AZCyl0scv",
+    "image": ["8a.jpg"],
+    "title": "Tubby Turtle",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["animals"]
+  },
+  "freddy-frog-bag": {
+    "id": "1L2UVkI4VhzYNG2ARSgubwAu",
+    "image": ["9a.jpg"],
+    "title": "Freddy Frog Bag",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["animals"]
+  },
+  "pipi-penguin": {
+    "id": "1L2UXFI4VhzYNG2AoTFIsyD3",
+    "image": ["10a.jpg"],
+    "title": "Pipi Penguin Bag",
+    "price": 9.9,
+    "qty": 10,
+    "tags": ["animals"]
+  }
+}
