@@ -1,16 +1,39 @@
 /* eslint-disable dot-notation */
 /* eslint linebreak-style: ["error", "windows"] */
 import dotenv from 'dotenv';
-import crypto from 'crypto';
-import { Blob } from 'buffer';
+import Stripe from 'stripe';
 
 dotenv.config();
 
-let products;
+const stripe = new Stripe(process.env['STRIPE_SECRET_KEY']);
 
 // eslint-disable-next-line import/prefer-default-export
 export async function post({ request }) {
   // const v = await request.json();
+  // const checkoutSession = v.data.object.id;
+
+  const checkoutSession = 'cs_test_b1yFcKSWk8hHuGPuN2NIVXPNbvKWaazy8LYMU0UnGuB0EO1mnSU90AwneA';
+
+  let res;
+
+  res = await stripe.checkout.sessions.listLineItems(
+    checkoutSession,
+    { limit: 100 },
+  );
+
+  const lineItems = res.data;
+
+  let cart = [];
+  for (let i = 0; i < res.data.length; i += 1) {
+    cart.push(stripe.products.retrieve(res.data[i].price.product));
+  }
+
+  cart = await Promise.all(cart);
+
+  // now subtract cart qty from products
+
+  console.log(lineItems)
+  console.log(cart)
 
   /* console.dir(v.data.object.customer_details);
   console.dir(v.data.object.payment_intent);
@@ -19,19 +42,9 @@ export async function post({ request }) {
 
   // get the exist db
 
-  const req = await fetch(process.env['VITE_WAREHOUSE_URL'], {
-    method: 'GET',
-  });
+  
 
-  products = await req.json();
-
-  // now subtract cart qty from products
-
-  products['spiderman-hard-shell-bag'].qty = 9;
-
-  // get hash list from netlify
-
-  getFileList();
+  // products['spiderman-hard-shell-bag'].qty = 9;
 
   /* for (let i = 0; i < cart.items.length; i += 1) {
     const currentQty = parseInt(products[cart.items[i].handle].qty, 10);
@@ -39,89 +52,39 @@ export async function post({ request }) {
     products[cart.items[i].handle].qty = newQty;
   } */
 
-  // prep for uploads
-
-  /* const blob = new Blob([JSON.stringify(products)], {
-    type: 'text/plain',
-  });
-
-  const hash = crypto
-    .createHash('sha1')
-    .update(JSON.stringify(products))
-    .digest('hex');
-
-  const corsBlob = new Blob(['/*\n  Access-Control-Allow-Origin: *'], {
-    type: 'text/plain',
-  });
-
-  const corsHash = crypto
-    .createHash('sha1')
-    .update('/*\n  Access-Control-Allow-Origin: *')
-    .digest('hex');
-
-  const indexBlob = new Blob(['Nothing to see here'], {
-    type: 'text/plain',
-  });
-
-  const indexHash = crypto
-    .createHash('sha1')
-    .update('Nothing to see here')
-    .digest('hex');
-
-  // send the digests to prep for deploy
-  req = await fetch(process.env['WAREHOUSE_DEPLOY'], {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env['WAREHOUSE']}`,
-    },
-    body: JSON.stringify({
-      files: {
-        '/db.json': hash,
-        '/_headers': corsHash,
-        '/index.html': indexHash,
-      },
-    }),
-  });
-
-  const res = await req.json();
-
-  // upload the blobs
-  req = await fetch(
-    `https://api.netlify.com/api/v1/deploys/${res.id}/files/db.json`,
+  /* req = await fetch(
+    'https://api.github.com/repos/TVqQAAMA/bagsocute/contents/products.json',
     {
-      method: 'PUT',
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/octet-stream',
-        Authorization: `Bearer ${process.env['WAREHOUSE']}`,
+        Authorization: 'token ' + process.env['GIT'],
       },
-      body: blob,
-    },
+    }
   );
 
-  req = await fetch(
-    `https://api.netlify.com/api/v1/deploys/${res.id}/files/_headers`,
-    {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        Authorization: `Bearer ${process.env['WAREHOUSE']}`,
-      },
-      body: corsBlob,
-    },
-  );
+  response = await req.json();
+
+  const dbSha = response.sha;
+  const buff = Buffer.from(JSON.stringify(products), 'utf-8');
+  const payload = buff.toString('base64');
 
   req = await fetch(
-    `https://api.netlify.com/api/v1/deploys/${res.id}/files/index.html`,
+    'https://api.github.com/repos/TVqQAAMA/bagsocute/contents/products.json',
     {
       method: 'PUT',
+      body: JSON.stringify({
+        message: '[skip ci]',
+        commiter: { name: '', email: '' },
+        content: payload,
+        sha: dbSha,
+      }),
       headers: {
-        'Content-Type': 'application/octet-stream',
-        Authorization: `Bearer ${process.env['WAREHOUSE']}`,
+        Authorization: 'token ' + process.env['GIT'],
       },
-      body: indexBlob,
-    },
-  ); */
+    }
+  );
+
+  response = await req.json(); */
 
   return {
     body: {
