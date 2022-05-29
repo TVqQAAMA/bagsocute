@@ -1,6 +1,6 @@
 <script context="module">
   export async function load({ fetch }) {
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL);
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + "/index.json");
 
     return {
       props: {
@@ -21,6 +21,7 @@
   import Image from '$lib/Image.svelte';
 
   const maxItemsPerRow = 5;
+  const warehouseUrl = import.meta.env.VITE_WAREHOUSE_URL;
   let order = {};
 
   for (let s in products) {
@@ -85,9 +86,9 @@
                   <div class="card is-shadowless">
                     <figure class="image is-square card-image">
                       <Image
-                        base="products/"
+                        base="{warehouseUrl}/{product.handle}/"
                         alt={product.title}
-                        src={product.image[0]}
+                        src={product.images[0]}
                       />
                     </figure>
                     <div class="card-content has-text-centered is-size-7">
@@ -128,7 +129,7 @@
           class="see-more content has-text-right has-text-weight-medium see-more is-capitalized mt-2"
         >
           <a href="/collections/{key}"
-            ><span class="icon-angle-double-right" />See More</a
+            ><span class="icon-angle-double-right" />See More {key}</a
           >
         </div>
       {/if}

@@ -1,10 +1,12 @@
 <script context="module">
-  export async function load({ session, fetch }) {
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL);
+  export async function load({ session, fetch, params }) {
+    const slug = params.slug;
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/' + slug + '.json');
+    console.log(await response.json)
     return {
       props: {
         session_id: session,
-        products: await response.json(),
+        product: await response.json(),
       },
     };
   }
@@ -23,14 +25,15 @@
   import '@splidejs/splide/css';
   import 'animate.css';
 
-  export let products;
+  export let product;
+
 
   let cart;
   let disabled = false;
   let loading = '';
 
   const slug = $page.params.slug;
-  const product = products[slug];
+  const base = import.meta.env.VITE_WAREHOUSE_URL + "/" + slug + "/";
 
   onMount(async () => {
     const main = new Splide('.splide', {
@@ -131,10 +134,10 @@
         <div class="splide">
           <div class="splide__track">
             <ul class="splide__list">
-              {#each product.image as image}
+              {#each product.images as image}
                 <li class="splide__slide">
                   <figure class="image">
-                    <Image base="" alt={product.title} src={image} />
+                    <Image base={base} alt={product.title} src={image} />
                   </figure>
                 </li>
               {/each}
@@ -145,10 +148,10 @@
         <div id="thumbnail-carousel" class="splide">
           <div class="splide__track">
             <ul class="splide__list">
-              {#each product.image as image}
+              {#each product.images as image}
                 <li class="splide__slide">
                   <figure class="image">
-                    <Image base="" alt={product.title} src={image} />
+                    <Image base={base} alt={product.title} src={image} />
                   </figure>
                 </li>
               {/each}

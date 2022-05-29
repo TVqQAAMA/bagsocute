@@ -1,6 +1,9 @@
 <script context="module">
-  export async function load({ session, fetch }) {
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL);
+  export async function load({ session, fetch, params }) {
+    const slug = params.slug;
+    const response = await fetch(
+      import.meta.env.VITE_WAREHOUSE_URL + '/collections/' + slug + '.json'
+    );
     return {
       props: {
         session_id: session,
@@ -25,6 +28,7 @@
   let n = 0;
 
   const slug = $page.params.slug;
+  const base = import.meta.env.VITE_WAREHOUSE_URL + "/";
 
   onMount(async () => {});
 
@@ -39,31 +43,31 @@
   <div class="container">
     <h1 class="title is-capitalized">{slug}</h1>
     <div class="columns is-multiline mt-6 is-mobile">
-      {#each Object.entries(products) as [handle, product]}
-        {#each product.tags as tag}
-          {#if tag === slug}
-            <div class="column is-one-fifth-desktop is-half-mobile">
-              <a sveltekit:prefetch href="/products/{handle}">
-                <div class="card is-shadowless">
-                  <figure class="image is-square card-image">
-                    <Image base='/products/' alt={product.title} src={product.image[0]} />
-                  </figure>
-                  <div class="card-content has-text-centered is-size-7">
-                    <p class="stock mb-1">
-                      <Stock qty={product.qty} />
-                    </p>
-                    <p class="product-title has-text-weight-medium">
-                      {product.title}
-                    </p>
-                    <p class="product-price">
-                      <Currency amount={product.price} /> SGD
-                    </p>
-                  </div>
-                </div>
-              </a>
+      {#each products as product}
+        <div class="column is-one-fifth-desktop is-half-mobile">
+          <a sveltekit:prefetch href="/products/{product.handle}">
+            <div class="card is-shadowless">
+              <figure class="image is-square card-image">
+                <Image
+                  base={base}{product.handle}/
+                  alt={product.title}
+                  src={product.images[0]}
+                />
+              </figure>
+              <div class="card-content has-text-centered is-size-7">
+                <p class="stock mb-1">
+                  <Stock qty={product.qty} />
+                </p>
+                <p class="product-title has-text-weight-medium">
+                  {product.title}
+                </p>
+                <p class="product-price">
+                  <Currency amount={product.price} /> SGD
+                </p>
+              </div>
             </div>
-          {/if}
-        {/each}
+          </a>
+        </div>
       {/each}
     </div>
   </div>
