@@ -9,7 +9,7 @@ fs.writeFile(
   () => {},
 );
 
-const cmdBuild = 'call npm run build';
+const cmdBuild = 'npm run build';
 const cmdAdd = 'git add .';
 const cmdCommit = 'git commit -m "."';
 const cmdPush = 'git push origin main';
@@ -25,10 +25,4 @@ exec(`${cmdBuild} && ${cmdAdd} && ${cmdCommit} && ${cmdPush}`, (error, stdout, s
   }
 
   console.log(`Output: ${stdout}`);
-
-  fs.writeFile(
-    './docs/.gitignore',
-    '',
-    () => {},
-  );
 });
