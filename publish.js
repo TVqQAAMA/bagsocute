@@ -18,19 +18,27 @@ const index = {};
 async function createJsonContent() {
   const handles = [];
   const imageMap = {};
+
   for (let i = 0; i < stripeProducts.length; i += 1) {
+    if (fs.existsSync(`./docs/${stripeProducts[i].metadata.handle}`)) {
+      // eslint-disable-next-line no-console
+      console.log(`The folder ${stripeProducts[i].metadata.handle} does not exist!`);
+      return;
+    }
+
     const fsPromises = fs.promises;
     readdirPromises.push(
       fsPromises.readdir(`./warehouse/${stripeProducts[i].metadata.handle}`, {
         withFileTypes: true,
       }),
     );
+
     handles.push(`${stripeProducts[i].metadata.handle}`);
   }
 
-  const v = await Promise.all(readdirPromises);
+  // const v = await Promise.all(readdirPromises);
 
-  for (let i = 0; i < v.length; i += 1) {
+  /* for (let i = 0; i < v.length; i += 1) {
     const imageList = [];
     const files = v[i];
     files.forEach((file) => {
@@ -116,18 +124,18 @@ async function createJsonContent() {
         () => {},
       );
     }
-  }
+  } */
 }
 
 async function getStripePrices(v) {
   let req;
   if (!v) {
     req = stripe.prices.list({
-      limit: 2,
+      limit: 100,
     });
   } else {
     req = stripe.prices.list({
-      limit: 2,
+      limit: 100,
       starting_after: v,
     });
   }
@@ -155,11 +163,11 @@ async function getStripeProducts(v) {
   let req;
   if (!v) {
     req = stripe.products.list({
-      limit: 2,
+      limit: 100,
     });
   } else {
     req = stripe.products.list({
-      limit: 2,
+      limit: 100,
       starting_after: v,
     });
   }
