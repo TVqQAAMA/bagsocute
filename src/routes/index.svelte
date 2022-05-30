@@ -21,7 +21,7 @@
   import Image from '$lib/Image.svelte';
 
   const maxItemsPerRow = 5;
-  const warehouseUrl = import.meta.env.VITE_WAREHOUSE_URL;
+  const base = import.meta.env.VITE_WAREHOUSE_URL + '/products';
   let order = {};
 
   for (let s in products) {
@@ -86,7 +86,7 @@
                   <div class="card is-shadowless">
                     <figure class="image is-square card-image">
                       <Image
-                        base="{warehouseUrl}/{product.handle}/"
+                        base="{base}/{product.handle}/"
                         alt={product.title}
                         src={product.images[0]}
                       />

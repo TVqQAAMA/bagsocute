@@ -28,7 +28,7 @@
   let n = 0;
 
   const slug = $page.params.slug;
-  const base = import.meta.env.VITE_WAREHOUSE_URL + "/";
+  const base = import.meta.env.VITE_WAREHOUSE_URL + "/products/";
 
   onMount(async () => {});
 

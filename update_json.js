@@ -16,29 +16,38 @@ const productPriceMap = {};
 const index = {};
 
 async function createJsonContent() {
+  // console.log('createJsonContent()');
+
   const handles = [];
   const imageMap = {};
 
   for (let i = 0; i < stripeProducts.length; i += 1) {
-    if (fs.existsSync(`./docs/${stripeProducts[i].metadata.handle}`)) {
+    if (
+      !fs.existsSync(`./docs/products/${stripeProducts[i].metadata.handle}/`)
+    ) {
       // eslint-disable-next-line no-console
-      console.log(`The folder ${stripeProducts[i].metadata.handle} does not exist!`);
+      console.log(
+        `The folder docs/products/${stripeProducts[i].metadata.handle} does not exist!`,
+      );
       return;
     }
 
     const fsPromises = fs.promises;
     readdirPromises.push(
-      fsPromises.readdir(`./warehouse/${stripeProducts[i].metadata.handle}`, {
-        withFileTypes: true,
-      }),
+      fsPromises.readdir(
+        `./docs/products/${stripeProducts[i].metadata.handle}`,
+        {
+          withFileTypes: true,
+        },
+      ),
     );
 
     handles.push(`${stripeProducts[i].metadata.handle}`);
   }
 
-  // const v = await Promise.all(readdirPromises);
+  const v = await Promise.all(readdirPromises);
 
-  /* for (let i = 0; i < v.length; i += 1) {
+  for (let i = 0; i < v.length; i += 1) {
     const imageList = [];
     const files = v[i];
     files.forEach((file) => {
@@ -61,13 +70,13 @@ async function createJsonContent() {
     };
 
     fs.writeFile(
-      `./warehouse/${stripeProducts[i].metadata.handle}.json`,
+      `./docs/products/${stripeProducts[i].metadata.handle}/product.json`,
       '',
       () => {},
     );
 
     fs.appendFile(
-      `./warehouse/${stripeProducts[i].metadata.handle}.json`,
+      `./docs/products/${stripeProducts[i].metadata.handle}/product.json`,
       JSON.stringify(content),
       () => {},
     );
@@ -76,17 +85,9 @@ async function createJsonContent() {
   }
 
   // write index.json
-  fs.writeFile(
-    './warehouse/index.json',
-    '',
-    () => {},
-  );
+  fs.writeFile('./docs/index.json', '', () => {});
 
-  fs.appendFile(
-    './warehouse/index.json',
-    JSON.stringify(index),
-    () => {},
-  );
+  fs.appendFile('./docs/index.json', JSON.stringify(index), () => {});
 
   // create collection jsons
 
@@ -112,22 +113,20 @@ async function createJsonContent() {
   // eslint-disable-next-line no-restricted-syntax
   for (const key in tags) {
     if (Object.prototype.hasOwnProperty.call(tags, key)) {
-      fs.writeFile(
-        `./warehouse/collections/${key}.json`,
-        '',
-        () => {},
-      );
+      fs.writeFile(`./docs/collections/${key}.json`, '', () => {});
 
       fs.appendFile(
-        `./warehouse/collections/${key}.json`,
+        `./docs/collections/${key}.json`,
         JSON.stringify(tags[key]),
         () => {},
       );
     }
-  } */
+  }
 }
 
 async function getStripePrices(v) {
+  // console.log('getStripePrices()');
+
   let req;
   if (!v) {
     req = stripe.prices.list({
@@ -160,6 +159,8 @@ async function getStripePrices(v) {
 }
 
 async function getStripeProducts(v) {
+  // console.log('getStripeProducts()');
+
   let req;
   if (!v) {
     req = stripe.products.list({

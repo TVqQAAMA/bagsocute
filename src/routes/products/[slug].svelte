@@ -1,7 +1,7 @@
 <script context="module">
   export async function load({ session, fetch, params }) {
     const slug = params.slug;
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/' + slug + '.json');
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/products/' + slug + '/product.json');
     console.log(await response.json)
     return {
       props: {
@@ -33,7 +33,7 @@
   let loading = '';
 
   const slug = $page.params.slug;
-  const base = import.meta.env.VITE_WAREHOUSE_URL + "/" + slug + "/";
+  const base = import.meta.env.VITE_WAREHOUSE_URL + "/products/" + slug + "/";
 
   onMount(async () => {
     const main = new Splide('.splide', {
