@@ -6,6 +6,149 @@ import Stripe from 'stripe';
 dotenv.config();
 
 const stripe = new Stripe(process.env['STRIPE_SECRET_KEY']);
+const lineItems = [];
+const payload = [];
+
+async function commit() {
+  await fetch(payload[0].url, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: '[skip ci]',
+      commiter: { name: '', email: '' },
+      content: payload[0].payload,
+      sha: payload[0].hash,
+    }),
+    headers: {
+      Authorization: `token ${process.env['GIT']}`,
+    },
+  });
+
+  console.log(payload.length);
+  payload.shift();
+  if (payload.length > 0) {
+    commit();
+  }
+}
+
+async function processLineItems() {
+  let res;
+
+  const productJsons = {};
+  const pathToHash = {};
+
+  // console.log(lineItems);
+
+  let cart = [];
+  for (let i = 0; i < lineItems.length; i += 1) {
+    cart.push(stripe.products.retrieve(lineItems[i].price.product));
+  }
+
+  cart = await Promise.all(cart);
+  console.log(cart);
+
+  // get current qty from warehouse, store in productQtyMap
+  let urls = [];
+
+  for (let i = 0; i < cart.length; i += 1) {
+    const { handle } = cart[i].metadata;
+    const url = process.env['VITE_WAREHOUSE_URL'];
+    const path = `docs/products/${handle}/product.json`
+    urls.push(`${url}/products/${handle}/product.json`);
+    pathToHash[path] = {
+      url: `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/${path}`,
+      product_id: cart[i].id,
+      hash: '',
+    };
+  }
+
+  res = await Promise.all(urls.map(async (url) => {
+    const resp = await fetch(url);
+    return resp.text();
+  }));
+
+  for (let i = 0; i < res.length; i += 1) {
+    const o = JSON.parse(res[i]);
+    productJsons[o.id] = o;
+  }
+
+  // console.log(productJsons);
+
+  // get the hashes of the files
+  urls = [];
+  Object.keys(pathToHash).forEach((key) => {
+    urls.push(pathToHash[key].url);
+  });
+
+  // console.log(urls);
+
+  res = await Promise.all(urls.map(async (url) => {
+    const resp = await fetch(url, {
+      headers: {
+        Authorization: `token ${process.env['GIT']}`,
+      },
+    });
+    return resp.json();
+  }));
+
+  for (let i = 0; i < res.length; i += 1) {
+    pathToHash[res[i].path].hash = res[i].sha;
+  }
+
+  Object.keys(pathToHash).forEach((key) => {
+    productJsons[pathToHash[key].product_id].hash = pathToHash[key].hash;
+    productJsons[pathToHash[key].product_id].url = pathToHash[key].url;
+  });
+
+  // update the new qtys
+
+  for (let i = 0; i < lineItems.length; i += 1) {
+    const productId = lineItems[i].price.product;
+    const qtyToRemove = parseInt(lineItems[i].quantity, 10);
+    const currentQty = parseInt(productJsons[productId].qty, 10);
+    productJsons[productId].qty = parseInt(currentQty - qtyToRemove, 10);
+  }
+
+  // update the warehouse
+  Object.keys(productJsons).forEach((key) => {
+    const payloadString = productJsons[key];
+    const buff = Buffer.from(JSON.stringify(payloadString), 'utf-8');
+    payload.push({
+      hash: productJsons[key].hash,
+      payload: buff.toString('base64'),
+      url: productJsons[key].url,
+    });
+  });
+
+  commit();
+}
+
+async function getLineItems(checkoutSession, v) {
+  let req;
+
+  if (!v) {
+    req = stripe.checkout.sessions.listLineItems(
+      checkoutSession,
+      { limit: 100 },
+    );
+  } else {
+    req = stripe.checkout.sessions.listLineItems(
+      checkoutSession,
+      { limit: 100, starting_after: v },
+    );
+  }
+
+  const res = await req;
+
+  for (let i = 0; i < res.data.length; i += 1) {
+    lineItems.push(res.data[i]);
+  }
+
+  if (res.has_more) {
+    getLineItems(checkoutSession, res.data[res.data.length - 1].id);
+  } else {
+    processLineItems();
+  }
+}
 
 // eslint-disable-next-line import/prefer-default-export
 export async function post({ request }) {
@@ -14,77 +157,12 @@ export async function post({ request }) {
 
   const checkoutSession = 'cs_test_b1yFcKSWk8hHuGPuN2NIVXPNbvKWaazy8LYMU0UnGuB0EO1mnSU90AwneA';
 
-  let res;
-
-  res = await stripe.checkout.sessions.listLineItems(
-    checkoutSession,
-    { limit: 100 },
-  );
-
-  const lineItems = res.data;
-
-  let cart = [];
-  for (let i = 0; i < res.data.length; i += 1) {
-    cart.push(stripe.products.retrieve(res.data[i].price.product));
-  }
-
-  cart = await Promise.all(cart);
-
-  // now subtract cart qty from products
-
-  console.log(lineItems)
-  console.log(cart)
+  await getLineItems(checkoutSession, false);
 
   /* console.dir(v.data.object.customer_details);
   console.dir(v.data.object.payment_intent);
   console.dir(v.data.object.shipping);
   console.dir(cart); */
-
-  // get the exist db
-
-  
-
-  // products['spiderman-hard-shell-bag'].qty = 9;
-
-  /* for (let i = 0; i < cart.items.length; i += 1) {
-    const currentQty = parseInt(products[cart.items[i].handle].qty, 10);
-    const newQty = currentQty - parseInt(cart.items[i].qty, 10);
-    products[cart.items[i].handle].qty = newQty;
-  } */
-
-  /* req = await fetch(
-    'https://api.github.com/repos/TVqQAAMA/bagsocute/contents/products.json',
-    {
-      method: 'GET',
-      headers: {
-        Authorization: 'token ' + process.env['GIT'],
-      },
-    }
-  );
-
-  response = await req.json();
-
-  const dbSha = response.sha;
-  const buff = Buffer.from(JSON.stringify(products), 'utf-8');
-  const payload = buff.toString('base64');
-
-  req = await fetch(
-    'https://api.github.com/repos/TVqQAAMA/bagsocute/contents/products.json',
-    {
-      method: 'PUT',
-      body: JSON.stringify({
-        message: '[skip ci]',
-        commiter: { name: '', email: '' },
-        content: payload,
-        sha: dbSha,
-      }),
-      headers: {
-        Authorization: 'token ' + process.env['GIT'],
-      },
-    }
-  );
-
-  response = await req.json(); */
 
   return {
     body: {
