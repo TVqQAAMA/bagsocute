@@ -2,6 +2,8 @@
 
 ## Setup
 
+### 1. Install NPM and Git
+
 ### 1. Clone the repository
 
 ```git clone
@@ -16,7 +18,7 @@ tes
 
 ### 5. Setup Environmental Variables
 
-### 5. (Optional) Link your custom domain
+### 6. (Optional) Link your custom domain
 
 ## Usage
 
