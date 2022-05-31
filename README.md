@@ -2,7 +2,13 @@
 
 ## Setup
 
-### 1. Install NPM and Git
+### 1. Environment setup
+
+- Install NPM
+- Install Git
+- Install Git dependencies
+- Install VSCode
+- ESLint and Prettier, Svelte for VS Code
 
 ### 1. Clone the repository
 
