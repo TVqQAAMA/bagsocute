@@ -8,6 +8,12 @@ dotenv.config();
 const stripe = new Stripe(process.env['STRIPE_SECRET_KEY']);
 const lineItems = [];
 const payload = [];
+const stripePromises = [];
+const customer = {};
+
+async function emailCustomer() {
+  console.dir(customer);
+}
 
 async function commit() {
   await fetch(payload[0].url, {
@@ -23,9 +29,11 @@ async function commit() {
     },
   });
 
-  console.log(payload.length);
   payload.shift();
-  if (payload.length > 0) {
+  if (payload.length === 0) {
+    await Promise.all(stripePromises);
+    emailCustomer();
+  } else {
     commit();
   }
 }
@@ -38,13 +46,16 @@ async function processLineItems() {
 
   // console.log(lineItems);
 
+  customer.lineItems = lineItems;
+
   let cart = [];
   for (let i = 0; i < lineItems.length; i += 1) {
     cart.push(stripe.products.retrieve(lineItems[i].price.product));
   }
 
   cart = await Promise.all(cart);
-  console.log(cart);
+  customer.cart = cart;
+  // console.log(cart);
 
   // get current qty from warehouse, store in productQtyMap
   let urls = [];
@@ -52,7 +63,7 @@ async function processLineItems() {
   for (let i = 0; i < cart.length; i += 1) {
     const { handle } = cart[i].metadata;
     const url = process.env['VITE_WAREHOUSE_URL'];
-    const path = `docs/products/${handle}/product.json`
+    const path = `docs/products/${handle}/product.json`;
     urls.push(`${url}/products/${handle}/product.json`);
     pathToHash[path] = {
       url: `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/${path}`,
@@ -62,7 +73,9 @@ async function processLineItems() {
   }
 
   res = await Promise.all(urls.map(async (url) => {
-    const resp = await fetch(url);
+    const resp = await fetch(url, {
+      cache: 'no-store',
+    });
     return resp.text();
   }));
 
@@ -83,6 +96,7 @@ async function processLineItems() {
 
   res = await Promise.all(urls.map(async (url) => {
     const resp = await fetch(url, {
+      cache: 'no-store',
       headers: {
         Authorization: `token ${process.env['GIT']}`,
       },
@@ -106,6 +120,13 @@ async function processLineItems() {
     const qtyToRemove = parseInt(lineItems[i].quantity, 10);
     const currentQty = parseInt(productJsons[productId].qty, 10);
     productJsons[productId].qty = parseInt(currentQty - qtyToRemove, 10);
+    console.log(currentQty, qtyToRemove, parseInt(currentQty - qtyToRemove, 10));
+    stripePromises.push(
+      stripe.products.update(
+        productId,
+        { metadata: { qty: parseInt(currentQty - qtyToRemove, 10) } },
+      ),
+    );
   }
 
   // update the warehouse
@@ -152,17 +173,16 @@ async function getLineItems(checkoutSession, v) {
 
 // eslint-disable-next-line import/prefer-default-export
 export async function post({ request }) {
-  // const v = await request.json();
-  // const checkoutSession = v.data.object.id;
+  const v = await request.json();
+  const checkoutSession = v.data.object.id;
 
-  const checkoutSession = 'cs_test_b1yFcKSWk8hHuGPuN2NIVXPNbvKWaazy8LYMU0UnGuB0EO1mnSU90AwneA';
+  // const checkoutSession = 'cs_test_b1yFcKSWk8hHuGPuN2NIVXPNbvKWaazy8LYMU0UnGuB0EO1mnSU90AwneA';
+
+  customer.details = v.data.object.customer_details;
+  customer.payment_intent = v.data.object.payment_intent;
+  customer.shipping = v.data.object.shipping;
 
   await getLineItems(checkoutSession, false);
-
-  /* console.dir(v.data.object.customer_details);
-  console.dir(v.data.object.payment_intent);
-  console.dir(v.data.object.shipping);
-  console.dir(cart); */
 
   return {
     body: {
