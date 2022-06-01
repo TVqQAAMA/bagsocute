@@ -6,22 +6,19 @@
     "build": "svelte-kit build",
     "package": "svelte-kit package",
     "preview": "svelte-kit preview",
-    "prepare": "svelte-kit sync",
-    "format": "prettier --write ./src/**/*.{js,svelte,html,ts}",
-    "lint": "eslint './src/**/*.{js,ts,svelte}'",
-    "lint:fix": "eslint --fix './src/**/*.{js,ts,svelte}'",
-    "prelint": "npm run format"
+    "prepare": "svelte-kit sync"
   },
   "devDependencies": {
+    "@feltcoop/eslint-config": "^0.1.7",
     "@stripe/stripe-js": "^1.29.0",
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/kit": "next",
-    "eslint": "^8.15.0",
-    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint": "^8.16.0",
+    "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-svelte3": "^4.0.0",
-    "prettier": "^2.6.2",
-    "prettier-plugin-svelte": "^2.7.0"
+    "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-svelte3": "^4.0.0"
   },
   "type": "module",
   "dependencies": {

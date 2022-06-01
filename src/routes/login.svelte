@@ -1,37 +1,36 @@
+
 <script>
-  let email;
-  let password;
-  let signInDisabled = false;
-  let loading = '';
+  import { page } from '$app/stores'
 
-  import { page } from '$app/stores';
-    
-  const gotoCart = $page.url.searchParams.has('cart');
+  let email
+  let password
+  let signInDisabled = false
+  let loading = ''
 
-  async function onSubmit() {
-    signInDisabled = true;
+  const gotoCart = $page.url.searchParams.has('cart')
+
+  async function onSubmit () {
+    signInDisabled = true
     loading = 'is-loading'
 
     const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
       headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+        'Content-Type': 'application/json'
+      }
+    })
 
-    const { response } = await login.json();
+    const { response } = await login.json()
 
-    console.log(response);
+    console.log(response)
 
-    if (response == 'ok') {
+    if (response === 'ok') {
       if (gotoCart) {
-        window.location = "/cart";
+        window.location = '/cart'
+      } else {
+        window.location = '/'
       }
-      else {
-        window.location = '/';
-      }
-      
     }
   }
 </script>
@@ -80,6 +79,3 @@
     </div>
   </div>
 </section>
-
-<style>
-</style>

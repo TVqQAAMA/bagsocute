@@ -10,7 +10,3 @@ node_modules
 stripe.exe
 /src/routes/intents/test.js
 cwebp.exe
-script_convert_webp.js
-script_deploy_images.js
-script_deploy.js
-script_update_json.js

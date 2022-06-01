@@ -1,5 +1,5 @@
-/* eslint linebreak-style: ["error", "windows"] */
-import { writable } from 'svelte/store';
+import { writable } from 'svelte/store'
 
-// eslint-disable-next-line import/prefer-default-export
-export const store = writable('{"items":[],"total":0}');
+const cart = { items: [], total: 0 }
+
+export const store = writable(JSON.stringify(cart))

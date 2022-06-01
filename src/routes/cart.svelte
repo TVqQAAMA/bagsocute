@@ -1,142 +1,131 @@
 <script context="module">
-  export async function load({ session, fetch }) {
-    let customer;
-
+  export async function load ({ session, fetch }) {
     if (session !== undefined) {
       const request = await fetch('/intents/customer', {
         method: 'POST',
-        body: session,
-      });
+        body: session
+      })
 
-      customer = await request.json();
+      await request.json()
     }
     return {
       props: {
-        session_id: session,
-      },
-    };
+        sessionId: session
+      }
+    }
   }
 </script>
 
 <script>
-  import { browser } from '$app/env';
-  import { loadStripe } from '@stripe/stripe-js';
-  import { onMount } from 'svelte';
-  import Currency from '$lib/Currency.svelte';
-  import { store } from '$lib/store.js';
-  import { toast } from 'bulma-toast';
-  import 'animate.css';
+  import { browser } from '$app/env'
+  import { loadStripe } from '@stripe/stripe-js'
+  import { onMount } from 'svelte'
+  import Currency from '$lib/Currency.svelte'
+  import { store } from '$lib/store.js'
+  import { toast } from 'bulma-toast'
+  import 'animate.css'
 
-  export let session_id;
+  export let sessionId
 
-  let cart = { items: [], total: 0 };
-  let stripe;
-  let checkOutDisabled = false;
-  let visibility = 'hidden';
-  let loading = '';
+  let cart = { items: [], total: 0 }
+  let stripe
+  let checkOutDisabled = false
+  let visibility = 'hidden'
+  let loading = ''
+  let grandTotal
+
+  const toastSettings = {
+    message: 'Cart updated',
+    type: 'is-white is-size-7 has-text-weight-medium',
+    dismissible: false,
+    position: 'top-center',
+    duration: 1000,
+    animate: { in: 'bounceInDown', out: 'bounceOut' }
+  }
 
   onMount(async () => {
-    stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-  });
+    stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY)
+    grandTotal = getGrandTotal()
+  })
 
   if (browser) {
     if (localStorage.getItem('cart') != null) {
-      cart = JSON.parse(localStorage.getItem('cart'));
+      cart = JSON.parse(localStorage.getItem('cart'))
     }
-    visibility = 'visible';
+    visibility = 'visible'
   }
 
-  async function onSubmit() {
-    checkOutDisabled = true;
-    loading = 'is-loading';
-    
-    if (!session_id) {
-      window.location = '/login?cart';
+  async function onSubmit () {
+    checkOutDisabled = true
+    loading = 'is-loading'
+
+    if (!sessionId) {
+      window.location = '/login?cart'
     } else {
       const checkout = await fetch('/intents/checkout', {
         method: 'POST',
         body: JSON.stringify({
-          session_id,
-          cart,
+          sessionId,
+          cart
         }),
         headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+          'Content-Type': 'application/json'
+        }
+      })
 
-      const { response } = await checkout.json();
+      const { response } = await checkout.json()
 
       stripe.redirectToCheckout({
-        sessionId: response,
-      });
+        sessionId: response
+      })
     }
   }
 
-  function minusCart(handle) {
-    cart.total -= 1;    
+  function minusCart (handle) {
+    cart.total -= 1
     for (let i = 0; i < cart.items.length; i += 1) {
       if (cart.items[i].handle === handle) {
-        cart.items[i].qty -= 1;
+        cart.items[i].qty -= 1
         if (cart.items[i].qty <= 0) {
-          cart.items.splice(i, 1);
+          cart.items.splice(i, 1)
         }
-        localStorage.setItem('cart', JSON.stringify(cart));
-        store.set(JSON.stringify(cart));
-        break;
+        localStorage.setItem('cart', JSON.stringify(cart))
+        store.set(JSON.stringify(cart))
+        break
       }
     }
-    grandTotal = getGrandTotal();
-    toast({
-      message: 'Quantity updated',
-      type: 'is-light is-size-7 has-text-weight-medium',
-      dismissible: false,
-      position: 'top-center',
-      duration: 1000,
-      animate: { in: 'bounceInDown', out: 'bounceOut' },
-    });
+    grandTotal = getGrandTotal()
+    toast(toastSettings)
   }
 
-  function plusCart(handle) {
-    cart.total += 1;    
+  function plusCart (handle) {
+    cart.total += 1
     for (let i = 0; i < cart.items.length; i += 1) {
       if (cart.items[i].handle === handle) {
-        cart.items[i].qty += 1;
-        localStorage.setItem('cart', JSON.stringify(cart));
-        store.set(JSON.stringify(cart));
-        break;
+        cart.items[i].qty += 1
+        localStorage.setItem('cart', JSON.stringify(cart))
+        store.set(JSON.stringify(cart))
+        break
       }
     }
-    grandTotal = getGrandTotal();
-    toast({
-      message: 'Quantity updated',
-      type: 'is-light is-size-7 has-text-weight-medium',
-      dismissible: false,
-      position: 'top-center',
-      duration: 1000,
-      animate: { in: 'bounceInDown', out: 'bounceOut' },
-    });
-    
+    grandTotal = getGrandTotal()
+    toast(toastSettings)
   }
 
-  let grandTotal = getGrandTotal();
-  
-  function getGrandTotal()
-  {
-    let n = 0;
-    for (let i = 0; i < cart.items.length; i += 1)
-    {
-      n += cart.items[i].price * cart.items[i].qty;
+  function getGrandTotal () {
+    let n = 0
+    for (let i = 0; i < cart.items.length; i += 1) {
+      n += cart.items[i].price * cart.items[i].qty
     }
-    return n;
+    return n
   }
-
 </script>
 
 <section class="section">
   <div class="container" style="visibility:{visibility}">
     <div class="columns is-centered">
       <div class="column is-fullwidth">
-        {#if cart.items.length == 0}
+        {#if cart.items.length === 0}
           <h1 class="title has-text-centered">Your cart is empty</h1>
         {:else}
           <h1 class="title">Your Cart</h1>
@@ -146,7 +135,7 @@
               <tr class="menu-label">
                 <th>Product</th>
                 <th>Quantity</th>
-                <th>Price</th>
+                <th>Price/Item</th>
               </tr>
               {#each cart.items as item, index (item.id)}
                 <tr>
@@ -208,7 +197,7 @@
         {/if}
         <form on:submit|preventDefault={onSubmit}>
           <div class="mt-5 control has-text-centered">
-            {#if cart.items.length == 0}
+            {#if cart.items.length === 0}
               <a href="/" class="button is-link">Continue shopping 😊</a>
               <div class="section">
                 <p class="content subtitle">Have an account?</p>
@@ -217,19 +206,24 @@
                 </p>
               </div>
             {:else}
-              <div class="block has-text-right"><span class="subtitle is-size-6 pr-3">Subtotal</span><span class="subtitle is-size-6 has-text-weight-medium"><Currency amount={grandTotal} /></span></div>
               <div class="block has-text-right">
-              <button disabled={checkOutDisabled} class="{loading} button is-warning has-text-weight-bold"
-                >💳 Check out</button
-              >
+                <span class="subtitle is-size-6 pr-3">Subtotal</span><span
+                  class="subtitle is-size-6 has-text-weight-medium"
+                  ><Currency amount={grandTotal} /></span
+                >
               </div>
-              
+              <div class="block has-text-right">
+                <button
+                  disabled={checkOutDisabled}
+                  class="{loading} button is-warning has-text-weight-bold"
+                  >💳 Check out</button
+                >
+              </div>
             {/if}
           </div>
         </form>
-      </div>      
+      </div>
     </div>
-    
   </div>
 </section>
 

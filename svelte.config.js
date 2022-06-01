@@ -1,11 +1,10 @@
-/* eslint linebreak-style: ["error", "windows"] */
-import adapter from '@sveltejs/adapter-netlify';
+import adapter from '@sveltejs/adapter-netlify'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   kit: {
-    adapter: adapter(),
-  },
-};
+    adapter: adapter()
+  }
+}
 
-export default config;
+export default config

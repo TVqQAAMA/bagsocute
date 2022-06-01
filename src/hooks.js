@@ -1,21 +1,19 @@
-/* eslint linebreak-style: ["error", "windows"] */
-import { parse } from 'cookie';
+import { parse } from 'cookie'
 
-export async function handle({ event, resolve }) {
-  const cookies = parse(event.request.headers.get('cookie') || '');
+export async function handle ({ event, resolve }) {
+  const cookies = parse(event.request.headers.get('cookie') || '')
 
-  if (cookies.session_id) {
-    // eslint-disable-next-line no-param-reassign
-    event.locals.session = cookies.session_id;
+  if (cookies.sessionId) {
+    event.locals.session = cookies.sessionId
   }
 
-  // console.log("Hook " + cookies.session_id)
-  // console.log("Hook " + event.locals.session)
+  // console.log('Hook ' + cookies.session_id)
+  // console.log('Hook ' + event.locals.session)
 
-  const response = await resolve(event);
-  return response;
+  const response = await resolve(event)
+  return response
 }
 
-export function getSession(event) {
-  return event.locals.session;
+export function getSession (event) {
+  return event.locals.session
 }

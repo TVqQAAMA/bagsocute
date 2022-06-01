@@ -1,20 +1,19 @@
 <script>
-  import { store } from '$lib/store.js';
-  import { browser } from '$app/env';
+  import { store } from '$lib/store.js'
+  import { browser } from '$app/env'
 
-  let cart;
-  
+  let cart
+
   store.subscribe((value) => {
-    cart = JSON.parse(value);
-  }); 
+    cart = JSON.parse(value)
+  })
 
-  cart = {"items":[]};
+  cart = { items: [], total: 0 }
   store.set(JSON.stringify(cart))
 
-  if (browser) {    
-    localStorage.setItem('cart', JSON.stringify(cart));
+  if (browser) {
+    localStorage.setItem('cart', JSON.stringify(cart))
   }
-
 </script>
 
 <section class="section">

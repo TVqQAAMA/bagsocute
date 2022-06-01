@@ -1,50 +1,51 @@
+
 <script context="module">
-  export async function load({ fetch }) {
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + "/index.json");
+  export async function load ({ fetch }) {
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/index.json')
 
     return {
       props: {
-        products: await response.json(),
-      },
-    };
+        products: await response.json()
+      }
+    }
   }
 </script>
 
 <script>
-  export let products;
+  import Currency from '$lib/Currency.svelte'
+  import { Splide } from '@splidejs/splide'
+  import '@splidejs/splide/css'
+  import { onMount } from 'svelte'
+  import Stock from '$lib/Stock.svelte'
+  import Image from '$lib/Image.svelte'
 
-  import Currency from '$lib/Currency.svelte';
-  import { Splide } from '@splidejs/splide';
-  import '@splidejs/splide/css';
-  import { onMount } from 'svelte';
-  import Stock from '$lib/Stock.svelte';
-  import Image from '$lib/Image.svelte';
+  export let products
 
-  const maxItemsPerRow = 5;
-  const base = import.meta.env.VITE_WAREHOUSE_URL + '/products';
-  let order = {};
+  const maxItemsPerRow = 5
+  const base = import.meta.env.VITE_WAREHOUSE_URL + '/products'
+  const order = {}
 
-  for (let s in products) {
+  for (const s in products) {
     for (let i = 0; i < products[s].tags.length; i++) {
-      let tag = products[s].tags[i];
+      const tag = products[s].tags[i]
 
       if (order[tag] === undefined) {
-        order[tag] = [];
+        order[tag] = []
       }
 
-      order[tag].hasMore = false;
+      order[tag].hasMore = false
       if (order[tag].length < maxItemsPerRow) {
-        products[s].handle = s;
-        order[tag].push(products[s]);
+        products[s].handle = s
+        order[tag].push(products[s])
       } else {
-        order[tag].hasMore = true;
+        order[tag].hasMore = true
       }
     }
   }
 
   onMount(async () => {
-    const featured = {};
-    for (let s in order) {
+    const featured = {}
+    for (const s in order) {
       featured[s] = new Splide('#' + s, {
         perPage: maxItemsPerRow,
         drag: false,
@@ -53,22 +54,21 @@
             perPage: 2,
             drag: true,
             padding: { right: '2.5rem' },
-            lazyLoad: true,
-          },
+            lazyLoad: true
+          }
         },
         arrows: false,
-        pagination: false,
-        drag: false,
-      });
+        pagination: false
+      })
     }
 
-    for (let s in featured) {
-      featured[s].mount();
+    for (const s in featured) {
+      featured[s].mount()
       featured[s].on('updated', function () {
-        featured[s].go(0);
-      });
+        featured[s].go(0)
+      })
     }
-  });
+  })
 </script>
 
 <section class="section">

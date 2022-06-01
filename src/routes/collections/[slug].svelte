@@ -1,40 +1,39 @@
 <script context="module">
-  export async function load({ session, fetch, params }) {
-    const slug = params.slug;
+  export async function load ({ session, fetch, params }) {
+    const slug = params.slug
     const response = await fetch(
       import.meta.env.VITE_WAREHOUSE_URL + '/collections/' + slug + '.json'
-    );
+    )
     return {
       props: {
         session_id: session,
-        products: await response.json(),
-      },
-    };
+        products: await response.json()
+      }
+    }
   }
 </script>
 
 <script>
-  import { page } from '$app/stores';
-  import { browser } from '$app/env';
-  import { onMount } from 'svelte';
-  import Image from '$lib/Image.svelte';
-  import Currency from '$lib/Currency.svelte';
-  import Stock from '$lib/Stock.svelte';
-  import '@splidejs/splide/css';
+  import { page } from '$app/stores'
+  import { browser } from '$app/env'
+  import { onMount } from 'svelte'
+  import Image from '$lib/Image.svelte'
+  import Currency from '$lib/Currency.svelte'
+  import Stock from '$lib/Stock.svelte'
+  import '@splidejs/splide/css'
 
-  export let products;
+  export let products
 
-  let cart;
-  let n = 0;
+  let cart
 
-  const slug = $page.params.slug;
-  const base = import.meta.env.VITE_WAREHOUSE_URL + "/products/";
+  const slug = $page.params.slug
+  const base = import.meta.env.VITE_WAREHOUSE_URL + '/products/'
 
-  onMount(async () => {});
+  onMount(async () => {})
 
   if (browser) {
     if (localStorage.getItem('cart') != null) {
-      cart = JSON.parse(localStorage.getItem('cart'));
+      cart = JSON.parse(localStorage.getItem('cart'))
     }
   }
 </script>

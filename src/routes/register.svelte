@@ -1,32 +1,33 @@
 <script>
-  let name;
-  let email;
-  let p;
-  let signUpDisabled = false;
-  let helpName = '';
-  let helpEmail = '';
-  let helpPassword = '';
-  let loading = '';
+  const signUpDisabled = false
 
-  async function onSubmit() {
-    helpName = '';
-    helpEmail = '';
-    helpPassword = '';
-    loading = 'is-loading';
+  let name
+  let email
+  let p
+  let helpName = ''
+  let helpEmail = ''
+  let helpPassword = ''
+  let loading = ''
+
+  async function onSubmit () {
+    helpName = ''
+    helpEmail = ''
+    helpPassword = ''
+    loading = 'is-loading'
 
     const register = await fetch('/intents/register', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ name, email, p }),
-    });
+      body: JSON.stringify({ name, email, p })
+    })
 
-    const { response } = await register.json();
+    const { response } = await register.json()
 
-    if (response != 'Exists') {
-      window.location = '/';
+    if (response !== 'Exists') {
+      window.location = '/'
     } else {
-      helpEmail = 'Email already exists';
-      loading = '';
+      helpEmail = 'Email already exists'
+      loading = ''
     }
   }
 </script>

@@ -1,69 +1,70 @@
 <script context="module">
-  export async function load({ session }) {
+  export async function load ({ session }) {
     return {
       props: {
-        session_id: session,
-      },
-    };
+        sessionId: session
+      }
+    }
   }
 </script>
 
 <script>
-  export let session_id;
-  import { page } from '$app/stores';
-  import { store } from '$lib/store.js';
-  import { browser } from '$app/env';
-  import { onMount } from 'svelte';
+  import { page } from '$app/stores'
+  import { store } from '$lib/store.js'
+  import { browser } from '$app/env'
+  import { onMount } from 'svelte'
 
-  let cart;
-  let logOutDisabled = true;
-  let loading = '';
+  export let sessionId
+
+  let cart
+  let logOutDisabled = true
+  let loading = ''
 
   store.subscribe((value) => {
-    cart = JSON.parse(value);
-  });
+    cart = JSON.parse(value)
+  })
 
   onMount(async () => {
     const $navbarBurgers = Array.prototype.slice.call(
       document.querySelectorAll('.navbar-burger'),
       0
-    );
+    )
 
     $navbarBurgers.forEach((el) => {
       el.addEventListener('click', () => {
-        const target = el.dataset.target;
-        const t = document.getElementById(target);
-        el.classList.toggle('is-active');
-        t.classList.toggle('is-active');
-      });
-    });
+        const target = el.dataset.target
+        const t = document.getElementById(target)
+        el.classList.toggle('is-active')
+        t.classList.toggle('is-active')
+      })
+    })
 
-    logOutDisabled = false;
-  });
+    logOutDisabled = false
+  })
 
   if (browser) {
     if (localStorage.getItem('cart') != null) {
-      cart = JSON.parse(localStorage.getItem('cart'));
+      cart = JSON.parse(localStorage.getItem('cart'))
     } else {
-      cart = { items: [], total: 0 };
-      store.set(JSON.stringify(cart));
-      localStorage.setItem('cart', JSON.stringify(cart));
+      cart = { items: [], total: 0 }
+      store.set(JSON.stringify(cart))
+      localStorage.setItem('cart', JSON.stringify(cart))
     }
   }
 
-  async function onLogout() {
-    logOutDisabled = true;
-    loading = 'is-loading';
-    const logout = await fetch('/intents/logout', { method: 'GET' });
-    const { response } = await logout.json();
+  async function onLogout () {
+    logOutDisabled = true
+    loading = 'is-loading'
+    const logout = await fetch('/intents/logout', { method: 'GET' })
+    const { response } = await logout.json()
     if (response === 'ok') {
-      window.location = '/';
+      window.location = '/'
     }
   }
 
-  function closeMenu() {
-    document.getElementById('navbar').classList.remove('is-active');
-    document.getElementById('navbar-burger').classList.remove('is-active');
+  function closeMenu () {
+    document.getElementById('navbar').classList.remove('is-active')
+    document.getElementById('navbar-burger').classList.remove('is-active')
   }
 </script>
 
@@ -106,7 +107,7 @@
             >
           {/if}
 
-          {#if session_id}
+          {#if sessionId}
             <div class="navbar-item">
               <div class="buttons">
                 <button

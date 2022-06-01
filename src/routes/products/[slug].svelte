@@ -1,46 +1,45 @@
 <script context="module">
-  export async function load({ session, fetch, params }) {
-    const slug = params.slug;
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/products/' + slug + '/product.json');
+  export async function load ({ session, fetch, params }) {
+    const slug = params.slug
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/products/' + slug + '/product.json')
     console.log(await response.json)
     return {
       props: {
         session_id: session,
-        product: await response.json(),
-      },
-    };
+        product: await response.json()
+      }
+    }
   }
 </script>
 
 <script>
-  import Currency from '$lib/Currency.svelte';
-  import Stock from '$lib/Stock.svelte';
-  import Image from '$lib/Image.svelte';
-  import { toast } from 'bulma-toast';
-  import { page } from '$app/stores';
-  import { store } from '$lib/store.js';
-  import { browser } from '$app/env';
-  import { Splide } from '@splidejs/splide';
-  import { onMount } from 'svelte';
-  import '@splidejs/splide/css';
-  import 'animate.css';
+  import Currency from '$lib/Currency.svelte'
+  import Stock from '$lib/Stock.svelte'
+  import Image from '$lib/Image.svelte'
+  import { toast } from 'bulma-toast'
+  import { page } from '$app/stores'
+  import { store } from '$lib/store.js'
+  import { browser } from '$app/env'
+  import { Splide } from '@splidejs/splide'
+  import { onMount } from 'svelte'
+  import '@splidejs/splide/css'
+  import 'animate.css'
 
-  export let product;
+  export let product
 
+  let cart
+  let disabled = false
+  let loading = ''
 
-  let cart;
-  let disabled = false;
-  let loading = '';
-
-  const slug = $page.params.slug;
-  const base = import.meta.env.VITE_WAREHOUSE_URL + "/products/" + slug + "/";
+  const slug = $page.params.slug
+  const base = import.meta.env.VITE_WAREHOUSE_URL + '/products/' + slug + '/'
 
   onMount(async () => {
     const main = new Splide('.splide', {
       perPage: 1,
       arrows: false,
-      pagination: true,
-    });
+      pagination: true
+    })
 
     const thumbnails = new Splide('#thumbnail-carousel', {
       fixedWidth: 100,
@@ -52,55 +51,56 @@
       breakpoints: {
         768: {
           fixedWidth: 60,
-          fixedHeight: 60,
-        },
-      },
-    });
+          fixedHeight: 60
+        }
+      }
+    })
 
-    main.sync(thumbnails);
-    main.mount();
-    thumbnails.mount();
-  });
+    main.sync(thumbnails)
+    main.mount()
+    thumbnails.mount()
+  })
 
   if (browser) {
     if (localStorage.getItem('cart') != null) {
-      cart = JSON.parse(localStorage.getItem('cart'));
+      cart = JSON.parse(localStorage.getItem('cart'))
     }
   }
 
-  function addToCart(addedItem) {
-    loading = 'is-loading';
-    disabled = true;
+  function addToCart (addedItem) {
+    loading = 'is-loading'
+    disabled = true
 
-    let item = {};
-    let alreadyExists = false;
+    const item = {}
+    let alreadyExists = false
 
-    cart.total += 1;
+    cart.total += 1
 
-    for (let item of cart.items) {
-      if (addedItem.id == item.id) {
-        item.qty += 1;
-        alreadyExists = true;
+    for (const item of cart.items) {
+      if (addedItem.id === item.id) {
+        item.qty += 1
+        alreadyExists = true
       }
     }
 
     if (!alreadyExists) {
-      item.id = addedItem.id.toString();
-      item.name = addedItem.title;
-      item.handle = slug;
-      item.qty = 1;
-      item.image = addedItem.image;
-      item.price = addedItem.price;
-      cart.items.push(item);
+      item.id = addedItem.id.toString()
+      item.name = addedItem.title
+      item.handle = slug
+      item.qty = 1
+      item.image = addedItem.image
+      item.price = addedItem.price
+      item.price_id = addedItem.price_id
+      cart.items.push(item)
     }
 
-    store.set(JSON.stringify(cart));
+    store.set(JSON.stringify(cart))
 
     if (browser) {
-      localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem('cart', JSON.stringify(cart))
     }
 
-    disabled = false;
+    disabled = false
 
     toast({
       message: '🎉 Added to cart',
@@ -108,21 +108,21 @@
       dismissible: false,
       position: 'top-center',
       duration: 1000,
-      animate: { in: 'bounceInDown', out: 'bounceOut' },
-    });
+      animate: { in: 'bounceInDown', out: 'bounceOut' }
+    })
 
-    loading = '';
+    loading = ''
   }
 
-  async function share() {
+  async function share () {
     const shareData = {
       title: 'Bag So Cute! - ' + product.title,
-      url: 'http://localhost:3000/products/' + slug,
-    };
+      url: 'http://localhost:3000/products/' + slug
+    }
     try {
-      await navigator.share(shareData);
+      await navigator.share(shareData)
     } catch (err) {
-      resultPara.textContent = 'Error: ' + err;
+      console.log(err)
     }
   }
 </script>
