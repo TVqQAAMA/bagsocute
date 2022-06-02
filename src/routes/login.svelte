@@ -25,7 +25,10 @@
   async function captchaCallback(token) {
     signInDisabled = true
     loading = 'is-loading'
-    const login = await fetch('/intents/login', {
+
+    console.log('#####')
+  
+    /* const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
       headers: {
@@ -41,7 +44,7 @@
       } else {
         // window.location = '/'
       }
-    }
+    } */
   }
 
   function handleCaptchaError() {

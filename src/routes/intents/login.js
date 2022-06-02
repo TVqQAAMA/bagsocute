@@ -41,20 +41,20 @@ export async function post ({ request }) {
           })
         },
         body: {
-          res: 'ok'
+          response: 'ok'
         }
       }
     }
     return {
       body: {
-        res: 'wrong password'
+        response: 'wrong password'
       }
     }
     // prevent 3 times
   }
   return {
     body: {
-      res: 'not exist'
+      response: 'not exist'
     }
   }
 }
