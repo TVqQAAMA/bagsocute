@@ -73,7 +73,7 @@
   <div class="container">
     <div class="navbar-brand">
       <a class="navbar-item" href="/" on:click="{closeMenu}">
-        <img alt="Logo" src="/logo.webp" width="112" height="28" />
+        <img alt="Logo" src="/logo.webp" />
       </a>
       <a on:click="{closeMenu}" class="navbar-item mobileCart" href="/cart"><span class="icon-basket"> ({cart.total})</span></a>
 

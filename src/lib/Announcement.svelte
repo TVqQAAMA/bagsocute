@@ -24,7 +24,7 @@
   <div class="splide__track">
     <ul class="splide__list">
       {#each messages as message}
-        <li class="splide__slide has-text-centered has-text-weight-medium has-text-white">{message}</li>
+        <li class="splide__slide has-text-centered has-text-weight-semibold has-text-white">{message}</li>
       {/each}
     </ul>
   </div>

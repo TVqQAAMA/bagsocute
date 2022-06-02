@@ -24,10 +24,6 @@ img {
   text-decoration: underline;
 }
 
-.product-price {
-  letter-spacing: 1.1px;
-}
-
 * {
   font-display: swap;
 }
@@ -35,4 +31,8 @@ img {
 .social {
   width: 1rem;
   height: 1rem;
+}
+
+.navbar-item img {
+  max-height: 3rem;
 }
