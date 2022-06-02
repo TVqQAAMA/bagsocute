@@ -53,7 +53,7 @@
                   src={product.images[0]}
                 />
               </figure>
-              <div class="card-content has-text-centered is-size-7">
+              <div class="card-content has-text-centered">
                 <p class="stock mb-1">
                   <Stock qty={product.qty} />
                 </p>

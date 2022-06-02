@@ -7,7 +7,7 @@
   onMount(async () => {
     const announcement = new Splide('#announcement', {
       type: 'loop',
-      fixedHeight: 22,
+      fixedHeight: 20,
       rewind: true,
       pagination: false,
       arrows: false,
