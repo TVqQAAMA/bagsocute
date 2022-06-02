@@ -25,7 +25,6 @@
   async function captchaCallback(token) {
     signInDisabled = true
     loading = 'is-loading'
-    console.log(JSON.stringify({ u: email, p: password }))
     const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
@@ -33,14 +32,14 @@
         'Content-Type': 'application/json'
       }
     })
-
+    console.log(login)
     const { response } = await login.json()
 
     if (response === 'ok') {
       if (gotoCart) {
         window.location = '/cart'
       } else {
-        window.location = '/'
+        // window.location = '/'
       }
     }
   }
