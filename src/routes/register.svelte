@@ -24,6 +24,8 @@
   }
 
   async function captchaCallback(token) {
+    window.grecaptcha.reset()
+  
     loading = 'is-loading'
     signUpDisabled = true
     helpName = ''
@@ -38,11 +40,20 @@
 
     const { response } = await register.json()
 
-    if (response !== 'Exists') {
-      window.location = '/'
-    } else {
-      helpEmail = 'Email already exists'
-      loading = ''
+    switch (response) {
+      case 'Exists':
+        helpEmail = 'Email already exists'
+        loading = ''
+        signUpDisabled = false
+        break
+      case 'Compromised':
+        helpPassword = '<a href="https://haveibeenpwned.com/Passwords">Insecure password used</a>'
+        loading = ''
+        signUpDisabled = false
+        break
+      default:
+        window.location = '/'
+        break
     }
   }
 
@@ -88,7 +99,7 @@
             <div class="control">
               <input type="password" class="input" id="password" minlength="1" required bind:value="{p}" />
             </div>
-            <p class="help is-danger">{helpPassword}</p>
+            <p class="help is-danger">{@html helpPassword}</p>
           </div>
 
           <div class="mt-5 control has-text-centered">

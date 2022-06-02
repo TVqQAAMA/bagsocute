@@ -25,6 +25,20 @@ export async function post ({ request }) {
     }
   }
 
+  const sha1 = crypto.createHash('sha1').update(v.p).digest('hex')
+  const sha1FirstFive = sha1.substring(0, 4)
+
+  const haveibeenpwned = await fetch(`https://api.pwnedpasswords.com/range/${sha1FirstFive}`)
+  const pwnedHashes = await haveibeenpwned.text()
+
+  if (pwnedHashes.indexOf(sha1) !== 1) {
+    return {
+      body: {
+        response: 'Compromised'
+      }
+    }
+  }
+
   const customer = await stripe.customers.create({
     email: v.email,
     name: v.name,

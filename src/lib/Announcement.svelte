@@ -7,7 +7,7 @@
   onMount(async () => {
     const announcement = new Splide('#announcement', {
       type: 'loop',
-      fixedHeight: 20,
+      fixedHeight: 22,
       rewind: true,
       pagination: false,
       arrows: false,
@@ -24,7 +24,7 @@
   <div class="splide__track">
     <ul class="splide__list">
       {#each messages as message}
-        <li class="splide__slide has-text-centered has-text-weight-medium has-text-white is-size-7">{message}</li>
+        <li class="splide__slide has-text-centered has-text-weight-medium has-text-white">{message}</li>
       {/each}
     </ul>
   </div>

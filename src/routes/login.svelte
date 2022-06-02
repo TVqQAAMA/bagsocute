@@ -23,6 +23,8 @@
   }
 
   async function captchaCallback(token) {
+    window.grecaptcha.reset()
+  
     signInDisabled = true
     loading = 'is-loading'
   
@@ -33,7 +35,7 @@
         'Content-Type': 'application/json'
       }
     })
-    console.log(login)
+  
     const { response } = await login.json()
 
     if (response === 'ok') {
