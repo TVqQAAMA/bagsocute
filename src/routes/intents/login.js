@@ -12,10 +12,13 @@ const stripe = new Stripe(process.env['STRIPE_SECRET_KEY'])
 export async function post ({ request }) {
   const v = await request.json()
 
+  console.log(v)
+
   const customer = await stripe.customers.search({
     query: `email:'${v.u}'`
-
   })
+
+  console.log(customer)
 
   if (customer.data.length === 1) {
     if (bcrypt.compareSync(v.p, customer.data[0].metadata.p)) {
@@ -29,6 +32,8 @@ export async function post ({ request }) {
         metadata: { s: uuid }
       })
 
+      console.log(uuid)
+
       return {
         status: 201,
         headers: {
@@ -36,7 +41,7 @@ export async function post ({ request }) {
             path: '/',
             httpOnly: true,
             sameSite: 'strict',
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.NODE_ENV === 'PRODUCTION',
             maxAge: 60 * 60 * 24 * 7 // one week
           })
         },
@@ -44,13 +49,15 @@ export async function post ({ request }) {
           response: 'ok'
         }
       }
-    }
-    return {
-      body: {
-        response: 'wrong password'
+    } else {
+      console.log('wrong passsss')
+      return {
+        body: {
+          response: 'wrong password'
+        }
       }
+      // prevent 3 times
     }
-    // prevent 3 times
   }
   return {
     body: {

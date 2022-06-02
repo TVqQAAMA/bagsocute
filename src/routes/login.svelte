@@ -37,10 +37,10 @@
         'Content-Type': 'application/json'
       }
     })
-    console.log(login)
-    const { response } = await login.json()
-
-    if (response === 'ok') {
+  
+    const res = await login.json()
+    console.log(res)
+    if (res === 'ok') {
       if (gotoCart) {
         window.location = '/cart'
       } else {
