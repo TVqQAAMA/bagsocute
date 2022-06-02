@@ -26,9 +26,11 @@
     signInDisabled = true
     loading = 'is-loading'
 
-    console.log('#####')
-  
-    /* const login = await fetch('/intents/login', {
+    login()
+  }
+
+  async function login() {
+    const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
       headers: {
@@ -44,7 +46,7 @@
       } else {
         // window.location = '/'
       }
-    } */
+    }
   }
 
   function handleCaptchaError() {
