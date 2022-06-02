@@ -38,15 +38,15 @@
       }
     })
   
-    const res = await login.json()
+    const res = await login.text()
     console.log(res)
-    if (res === 'ok') {
+    /* if (res === 'ok') {
       if (gotoCart) {
         window.location = '/cart'
       } else {
         // window.location = '/'
       }
-    }
+    } */
   }
 
   function handleCaptchaError() {

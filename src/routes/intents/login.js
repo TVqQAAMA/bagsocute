@@ -12,13 +12,9 @@ const stripe = new Stripe(process.env['STRIPE_SECRET_KEY'])
 export async function post ({ request }) {
   const v = await request.json()
 
-  console.log(v)
-
   const customer = await stripe.customers.search({
     query: `email:'${v.u}'`
   })
-
-  console.log(customer)
 
   if (customer.data.length === 1) {
     if (bcrypt.compareSync(v.p, customer.data[0].metadata.p)) {
@@ -31,8 +27,6 @@ export async function post ({ request }) {
       await stripe.customers.update(customer.data[0].id, {
         metadata: { s: uuid }
       })
-
-      console.log(uuid)
 
       return {
         status: 201,
@@ -50,7 +44,6 @@ export async function post ({ request }) {
         }
       }
     } else {
-      console.log('wrong passsss')
       return {
         body: {
           response: 'wrong password'
