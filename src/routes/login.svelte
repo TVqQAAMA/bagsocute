@@ -54,7 +54,7 @@
 </script>
 
 <svelte:head>
-  <script src="//www.google.com/recaptcha/api.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js"></script>
 </svelte:head>
 
 <div class="g-recaptcha" data-sitekey="{RECAPTCHA_SITE_KEY}" data-callback="captchaCallback" data-size="invisible"></div>

@@ -21,6 +21,7 @@
   async function onSubmit() {
     loading = 'is-loading'
     signUpDisabled = true
+    // eslint-disable-next-line no-undef
     grecaptcha.execute()
   }
 
