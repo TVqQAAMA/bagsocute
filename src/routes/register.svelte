@@ -19,13 +19,13 @@
   })
 
   async function onSubmit() {
-    loading = 'is-loading'
-    signUpDisabled = true
     // eslint-disable-next-line no-undef
     grecaptcha.execute()
   }
 
   async function captchaCallback(token) {
+    loading = 'is-loading'
+    signUpDisabled = true
     helpName = ''
     helpEmail = ''
     helpPassword = ''

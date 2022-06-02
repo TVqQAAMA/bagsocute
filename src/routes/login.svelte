@@ -4,7 +4,7 @@
 
   let email
   let password
-  let signInDisabled = false
+  let signInDisabled = true
   let loading = ''
 
   const gotoCart = $page.url.searchParams.has('cart')
@@ -14,17 +14,17 @@
     window.captchaCallback = captchaCallback
     window.handleCaptchaError = handleCaptchaError
     window.resetCaptcha = resetCaptcha
+    window.onloadCaptcha = onloadCaptcha
   })
 
   async function onSubmit() {
-    signInDisabled = true
-    loading = 'is-loading'
-
     // eslint-disable-next-line no-undef
     grecaptcha.execute()
   }
 
   async function captchaCallback(token) {
+    signInDisabled = true
+    loading = 'is-loading'
     const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
@@ -51,10 +51,14 @@
   function resetCaptcha() {
     window.grecaptcha.reset()
   }
+
+  function onloadCaptcha() {
+    signInDisabled = false
+  }
 </script>
 
 <svelte:head>
-  <script src="https://www.google.com/recaptcha/api.js"></script>
+  <script src="//www.google.com/recaptcha/api.js?onload=onloadCaptcha" async defer></script>
 </svelte:head>
 
 <div class="g-recaptcha" data-sitekey="{RECAPTCHA_SITE_KEY}" data-callback="captchaCallback" data-size="invisible"></div>
