@@ -1,5 +1,5 @@
 <script context="module">
-  export async function load ({ session }) {
+  export async function load({ session }) {
     return {
       props: {
         sessionId: session
@@ -13,6 +13,7 @@
   import { store } from '$lib/store.js'
   import { browser } from '$app/env'
   import { onMount } from 'svelte'
+  import Announcement from '$lib/Announcement.svelte'
 
   export let sessionId
 
@@ -25,10 +26,7 @@
   })
 
   onMount(async () => {
-    const $navbarBurgers = Array.prototype.slice.call(
-      document.querySelectorAll('.navbar-burger'),
-      0
-    )
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0)
 
     $navbarBurgers.forEach((el) => {
       el.addEventListener('click', () => {
@@ -52,7 +50,7 @@
     }
   }
 
-  async function onLogout () {
+  async function onLogout() {
     logOutDisabled = true
     loading = 'is-loading'
     const logout = await fetch('/intents/logout', { method: 'GET' })
@@ -62,59 +60,43 @@
     }
   }
 
-  function closeMenu () {
+  function closeMenu() {
     document.getElementById('navbar').classList.remove('is-active')
     document.getElementById('navbar-burger').classList.remove('is-active')
   }
 </script>
 
-<section class="section has-navbar-fixed-top">
-  <nav class="navbar is-fixed-top" aria-label="main navigation">
-    <div class="container">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/" on:click={closeMenu}>
-          <img alt="Logo" src="/logo.webp" width="112" height="28" />
-        </a>
-        <a on:click={closeMenu} class="navbar-item mobileCart" href="/cart"
-          ><span class="icon-basket"> ({cart.total})</span></a
-        >
+<Announcement />
 
-        <a
-          href="#!"
-          role="button"
-          class="navbar-burger"
-          id="navbar-burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbar"
-        >
-          <span aria-hidden="true" />
-          <span aria-hidden="true" />
-          <span aria-hidden="true" />
-        </a>
+<nav class="navbar sticky">
+  <div class="container">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/" on:click="{closeMenu}">
+        <img alt="Logo" src="/logo.webp" width="112" height="28" />
+      </a>
+      <a on:click="{closeMenu}" class="navbar-item mobileCart" href="/cart"><span class="icon-basket"> ({cart.total})</span></a>
+
+      <a href="#!" role="button" class="navbar-burger" id="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div class="navbar-menu" id="navbar">
+      <div class="navbar-start" on:click="{closeMenu}">
+        <a href="/" class="navbar-item">Home </a>
+        <a href="/about" class="navbar-item">About</a>
       </div>
 
-      <div class="navbar-menu" id="navbar">
-        <div class="navbar-start" on:click={closeMenu}>
-          <a href="/" class="navbar-item">Home </a>
-          <a href="/about" class="navbar-item">About</a>
-        </div>
-
-        <div class="navbar-end" on:click={closeMenu}>
-          {#if $page.url.pathname !== '/thanks'}
-            <a class="navbar-item desktopCart" href="/cart"
-              ><span class="icon-basket"> ({cart.total})</span></a
-            >
-          {/if}
+      <div class="navbar-end" on:click="{closeMenu}">
+        {#if $page.url.pathname !== '/thanks'}
+          <a class="navbar-item desktopCart" href="/cart"><span class="icon-basket"> ({cart.total})</span></a>
 
           {#if sessionId}
             <div class="navbar-item">
               <div class="buttons">
-                <button
-                  disabled={logOutDisabled}
-                  class="{loading} button is-light"
-                  on:click|once={onLogout}
-                >
+                <button disabled="{logOutDisabled}" class="{loading} button is-light" on:click|once="{onLogout}">
                   <strong>Log Out</strong>
                 </button>
               </div>
@@ -129,26 +111,21 @@
               </div>
             </div>
           {/if}
-        </div>
+        {/if}
       </div>
     </div>
-  </nav>
-</section>
-
+  </div>
+</nav>
 <slot />
 
 <style>
   .mobileCart {
     margin-left: auto;
+    display: none;
   }
   .navbar-burger {
     margin: 0;
   }
-
-  .mobileCart {
-    display: none;
-  }
-
   @media only screen and (max-width: 768px) {
     .mobileCart {
       display: grid;
@@ -162,7 +139,9 @@
     }
   }
 
-  .has-navbar-fixed-top {
-    padding-top: 0;
+  .sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
   }
 </style>

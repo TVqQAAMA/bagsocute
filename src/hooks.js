@@ -1,6 +1,6 @@
 import { parse } from 'cookie'
 
-export async function handle ({ event, resolve }) {
+export async function handle({ event, resolve }) {
   const cookies = parse(event.request.headers.get('cookie') || '')
 
   if (cookies.sessionId) {
@@ -14,6 +14,6 @@ export async function handle ({ event, resolve }) {
   return response
 }
 
-export function getSession (event) {
+export function getSession(event) {
   return event.locals.session
 }

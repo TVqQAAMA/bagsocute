@@ -1,6 +1,7 @@
 /* eslint-disable dot-notation */
 import dotenv from 'dotenv'
 import Stripe from 'stripe'
+import sgMail from '@sendgrid/mail'
 
 dotenv.config()
 
@@ -8,13 +9,100 @@ const stripe = new Stripe(process.env['STRIPE_SECRET_KEY'])
 const lineItems = []
 const payload = []
 const stripePromises = []
-const customer = {}
+const checkout = {}
 
-async function emailCustomer () {
-  console.dir(customer)
+async function emailCustomer() {
+  console.dir(checkout)
+
+  let lineItemsBody = ''
+
+  const customer = await stripe.customers.retrieve(checkout.details.customer)
+  const nextInvoiceSequence = parseInt(customer.next_invoice_sequence, 10) + 1
+  await stripe.customers.update(checkout.details.customer,
+    { next_invoice_sequence: nextInvoiceSequence }
+  )
+  checkout.invoice = customer.invoice_prefix + '-' + nextInvoiceSequence
+
+  for (let i = 0; i < checkout.lineItems.length; i += 1) {
+    const amount = checkout.lineItems[i].amount_total / 100
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: checkout.details.currency
+    })
+    const renderedAmount = formatter.format(amount)
+    lineItemsBody += `
+      <tr>
+        <td>${checkout.lineItems[i].description}</td>
+        <td>${checkout.lineItems[i].quantity}</td>
+        <td>${renderedAmount}</td>
+      </tr>
+    `
+  }
+
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: checkout.details.currency
+  })
+  const grandTotal = formatter.format(checkout.details.amount_total / 100)
+
+  const emailBody = `
+    <h3>Thank you for your purchase!</h3>
+    <p>We're getting your order ready to be shipped. We will notify you when it has been sent.</p>
+    <h3>Order Summary</h3>
+    <table style='border-spacing: 20px; text-align:left;'>
+      <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+      </tr>
+      ${lineItemsBody}
+      <tr><td><strong>Total ${grandTotal}</strong></td></tr>
+    </table>
+    <h3>Shipping Details</h3>
+    <table style='border-spacing: 20px;>
+      <tbody style='vertical-align: top;'>
+        <tr>
+          <td>
+            <h4>Shipping Address</h4>
+            <p>${checkout.details.shipping.name}</p>
+            <p>${checkout.details.shipping.address.line1}<br>
+            ${checkout.details.shipping.address.line2}<br>
+            ${checkout.details.shipping.address.postal_code}<br>
+            ${checkout.details.shipping.address.state}, ${checkout.details.shipping.address.city}<br>
+            ${checkout.details.shipping.address.country}
+            </p>
+          </td>
+          <td>
+            <h4>Billing Address</h4>
+            <p>${checkout.details.customer_details.name} ${checkout.details.customer_details.phone}
+            </p>
+            <p>${checkout.details.customer_details.address.line1}<br>
+            ${checkout.details.customer_details.address.line2}<br>
+            ${checkout.details.customer_details.address.postal_code}<br>
+            ${checkout.details.customer_details.address.state}, ${checkout.details.customer_details.address.city}<br>
+            ${checkout.details.customer_details.address.country}
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <hr>
+    <p>If you have any questions, reply to this email or contact us at info@bagsocute.com</p>
+  `
+
+  sgMail.setApiKey(process.env['SENDGRID'])
+
+  const msg = {
+    to: checkout.details.customer_details.email,
+    from: 'Bag So Cute! <info@bagsocute.com>',
+    subject: 'Order ' + checkout.invoice + ' confirmed',
+    html: emailBody
+  }
+
+  await sgMail.send(msg)
 }
 
-async function commit () {
+async function commit() {
   await fetch(payload[0].url, {
     method: 'PUT',
     body: JSON.stringify({
@@ -31,13 +119,13 @@ async function commit () {
   payload.shift()
   if (payload.length === 0) {
     await Promise.all(stripePromises)
-    emailCustomer()
+    await emailCustomer()
   } else {
     commit()
   }
 }
 
-async function processLineItems () {
+async function processLineItems() {
   let res
 
   const productJsons = {}
@@ -45,7 +133,7 @@ async function processLineItems () {
 
   // console.log(lineItems);
 
-  customer.lineItems = lineItems
+  checkout.lineItems = lineItems
 
   let cart = []
   for (let i = 0; i < lineItems.length; i += 1) {
@@ -53,7 +141,7 @@ async function processLineItems () {
   }
 
   cart = await Promise.all(cart)
-  customer.cart = cart
+  // checkout.cart = cart
   // console.log(cart);
 
   // get current qty from warehouse, store in productQtyMap
@@ -141,7 +229,7 @@ async function processLineItems () {
   commit()
 }
 
-async function getLineItems (checkoutSession, v) {
+async function getLineItems(checkoutSession, v) {
   let req
 
   if (!v) {
@@ -169,15 +257,13 @@ async function getLineItems (checkoutSession, v) {
   }
 }
 
-export async function post ({ request }) {
+export async function post({ request }) {
   const v = await request.json()
   const checkoutSession = v.data.object.id
 
   // const checkoutSession = 'cs_test_b1yFcKSWk8hHuGPuN2NIVXPNbvKWaazy8LYMU0UnGuB0EO1mnSU90AwneA';
 
-  customer.details = v.data.object.customer_details
-  customer.payment_intent = v.data.object.payment_intent
-  customer.shipping = v.data.object.shipping
+  checkout.details = v.data.object
 
   await getLineItems(checkoutSession, false)
 

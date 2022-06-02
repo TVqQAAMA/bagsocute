@@ -3,7 +3,7 @@
   $: amount /= 100
   $: formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'SGD'
+    currency: 'sgd'
   })
   $: renderedAmount = formatter.format(amount)
 </script>
