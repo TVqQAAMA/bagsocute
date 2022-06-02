@@ -20,7 +20,7 @@
   })
 </script>
 
-<div class="splide " id="announcement">
+<div class="splide" id="announcement">
   <div class="splide__track">
     <ul class="splide__list">
       {#each messages as message}

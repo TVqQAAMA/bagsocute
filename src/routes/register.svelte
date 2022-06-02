@@ -1,5 +1,8 @@
 <script>
-  const signUpDisabled = false
+  import { onMount } from 'svelte'
+  const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+
+  let signUpDisabled = false
 
   let name
   let email
@@ -9,11 +12,22 @@
   let helpPassword = ''
   let loading = ''
 
+  onMount(() => {
+    window.captchaCallback = captchaCallback
+    window.handleCaptchaError = handleCaptchaError
+    window.resetCaptcha = resetCaptcha
+  })
+
   async function onSubmit() {
+    loading = 'is-loading'
+    signUpDisabled = true
+    grecaptcha.execute()
+  }
+
+  async function captchaCallback(token) {
     helpName = ''
     helpEmail = ''
     helpPassword = ''
-    loading = 'is-loading'
 
     const register = await fetch('/intents/register', {
       method: 'POST',
@@ -30,7 +44,21 @@
       loading = ''
     }
   }
+
+  function handleCaptchaError() {
+    window.location = '/login'
+  }
+
+  function resetCaptcha() {
+    window.grecaptcha.reset()
+  }
 </script>
+
+<svelte:head>
+  <script src="//www.google.com/recaptcha/api.js"></script>
+</svelte:head>
+
+<div class="g-recaptcha" data-sitekey="{RECAPTCHA_SITE_KEY}" data-callback="captchaCallback" data-size="invisible"></div>
 
 <section class="section">
   <div class="container">

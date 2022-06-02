@@ -22,7 +22,6 @@
   import { browser } from '$app/env'
   import { Splide } from '@splidejs/splide'
   import { onMount } from 'svelte'
-  import '@splidejs/splide/css'
   import 'animate.css'
 
   export let product
@@ -35,7 +34,7 @@
   const base = import.meta.env.VITE_WAREHOUSE_URL + '/products/' + slug + '/'
 
   onMount(async () => {
-    const main = new Splide('.splide', {
+    const main = new Splide('#carousel', {
       perPage: 1,
       arrows: false,
       pagination: true
@@ -131,7 +130,7 @@
   <div class="container">
     <div class="columns">
       <div class="column">
-        <div class="splide">
+        <div class="splide" id="carousel">
           <div class="splide__track">
             <ul class="splide__list">
               {#each product.images as image}
@@ -145,7 +144,7 @@
           </div>
         </div>
 
-        <div id="thumbnail-carousel" class="splide">
+        <div class="splide" id="thumbnail-carousel">
           <div class="splide__track">
             <ul class="splide__list">
               {#each product.images as image}

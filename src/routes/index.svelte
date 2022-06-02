@@ -14,7 +14,6 @@
 <script>
   import Currency from '$lib/Currency.svelte'
   import { Splide } from '@splidejs/splide'
-  import '@splidejs/splide/css'
   import { onMount } from 'svelte'
   import Stock from '$lib/Stock.svelte'
   import Image from '$lib/Image.svelte'

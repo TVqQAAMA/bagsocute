@@ -14,6 +14,7 @@
   import { browser } from '$app/env'
   import { onMount } from 'svelte'
   import Announcement from '$lib/Announcement.svelte'
+  import '@splidejs/splide/css'
 
   export let sessionId
 
