@@ -25,6 +25,7 @@
   async function captchaCallback(token) {
     signInDisabled = true
     loading = 'is-loading'
+    console.log(JSON.stringify({ u: email, p: password }))
     const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
