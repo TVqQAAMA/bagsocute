@@ -25,11 +25,7 @@
   async function captchaCallback(token) {
     signInDisabled = true
     loading = 'is-loading'
-
-    login()
-  }
-
-  async function login() {
+  
     const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
@@ -37,16 +33,16 @@
         'Content-Type': 'application/json'
       }
     })
-  
-    const res = await login.text()
-    console.log(res)
-    /* if (res === 'ok') {
+    console.log(login)
+    const { response } = await login.json()
+
+    if (response === 'ok') {
       if (gotoCart) {
         window.location = '/cart'
       } else {
-        // window.location = '/'
+        window.location = '/'
       }
-    } */
+    }
   }
 
   function handleCaptchaError() {
