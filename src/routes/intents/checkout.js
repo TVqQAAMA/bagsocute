@@ -32,8 +32,8 @@ export async function post ({ request }) {
   }
 
   const stripeCheckOutSession = await stripe.checkout.sessions.create({
-    success_url: 'http://localhost:3000/thanks',
-    cancel_url: 'http://localhost:3000/cart',
+    success_url: 'https://bagsocute.netlify.app/thanks',
+    cancel_url: 'https://bagsocute.netlify.app/cart',
     line_items: lineItems,
     mode: 'payment',
     customer: custId,
