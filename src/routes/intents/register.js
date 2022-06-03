@@ -26,12 +26,12 @@ export async function post ({ request }) {
   }
 
   const sha1 = crypto.createHash('sha1').update(v.p).digest('hex')
-  const sha1FirstFive = sha1.substring(0, 4)
-
+  const sha1FirstFive = sha1.substring(0, 5)
+  const sha1Last = sha1.substring(5, sha1.length)
   const haveibeenpwned = await fetch(`https://api.pwnedpasswords.com/range/${sha1FirstFive}`)
   const pwnedHashes = await haveibeenpwned.text()
 
-  if (pwnedHashes.indexOf(sha1) !== 1) {
+  if (pwnedHashes.includes(sha1Last.toUpperCase())) {
     return {
       body: {
         response: 'Compromised'
