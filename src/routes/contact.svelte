@@ -2,15 +2,14 @@
   import { onMount } from 'svelte'
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
 
-  let signUpDisabled = true
+  let submitDisabled = true
 
   let name
   let email
-  let p
-  let helpName = ''
+  let comment
   let helpEmail = ''
-  let helpPassword = ''
   let loading = ''
+  let sentStatus = ''
 
   onMount(() => {
     window.captchaCallback = captchaCallback
@@ -30,40 +29,27 @@
 
   async function captchaCallback(token) {
     window.grecaptcha.reset()
-  
-    loading = 'is-loading'
-    signUpDisabled = true
-    helpName = ''
-    helpEmail = ''
-    helpPassword = ''
 
-    const register = await fetch('/intents/register', {
+    loading = 'is-loading'
+    submitDisabled = true
+    helpEmail = ''
+
+    const register = await fetch('/intents/contact', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ name, email, p })
+      body: JSON.stringify({ name, email, comment })
     })
 
     const { response } = await register.json()
-
-    switch (response) {
-      case 'Exists':
-        helpEmail = 'Email already exists'
-        loading = ''
-        signUpDisabled = false
-        break
-      case 'Compromised':
-        helpPassword = '<a class="underline" href="https://haveibeenpwned.com/Passwords">Insecure password used</a>'
-        loading = ''
-        signUpDisabled = false
-        break
-      default:
-        window.location = '/'
-        break
+  
+    if (response === 'ok') {
+      document.getElementById('sendButton').style.display = 'none'
+      sentStatus = 'Message sent!'
     }
   }
 
   function handleCaptchaError() {
-    window.location = '/register'
+    window.location = '/contact'
   }
 
   function resetCaptcha() {
@@ -71,7 +57,7 @@
   }
 
   function onloadCaptcha() {
-    signUpDisabled = false
+    submitDisabled = false
   }
 </script>
 
@@ -81,34 +67,36 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-half">
-        <h1 class="title is-centered has-text-centered">Create account</h1>
+        <h1 class="title is-centered">Contact Us</h1>
+        <p class="content has-text-justified">If you have a question, please read our FAQ first! If you can't find answers there, we are happy to assist.</p>
+        <p class="content has-text-justified">
+          If you need recommendations, have a comment or any feedback, feel free to reach out to us using the contact form below. Alternatively, we can be
+          contacted through WhatsApp, Instagram or email us directly at info@bagsocute.com
+        </p>
         <form on:submit|preventDefault="{onSubmit}">
           <div class="field">
             <label for="name" class="label">Name</label>
             <div class="control">
-              <input disabled="{signUpDisabled}" type="name" class="input" id="name" required bind:value="{name}" />
+              <input disabled="{submitDisabled}" type="name" class="input" id="name" required bind:value="{name}" />
             </div>
-            <p class="help is-danger">{helpName}</p>
           </div>
 
           <div class="field">
             <label for="email" class="label">Email</label>
             <div class="control">
-              <input disabled="{signUpDisabled}" type="email" class="input" id="email" required bind:value="{email}" />
+              <input disabled="{submitDisabled}" type="email" class="input" id="email" required bind:value="{email}" />
             </div>
             <p class="help is-danger">{helpEmail}</p>
           </div>
 
           <div class="field">
-            <label for="password" class="label">Password</label>
-            <div class="control">
-              <input disabled="{signUpDisabled}" type="password" class="input" id="password" minlength="1" required bind:value="{p}" />
-            </div>
-            <p class="help is-danger">{@html helpPassword}</p>
+            <label for="comment" class="label">Comment</label>
+            <textarea disabled="{submitDisabled}" class="textarea" required bind:value="{comment}"></textarea>
           </div>
 
-          <div class="mt-5 control has-text-centered">
-            <button disabled="{signUpDisabled}" class="{loading} button is-dark">Create</button>
+          <div class="mt-5 control has-text-right">
+            <button disabled="{submitDisabled}" class="{loading} button is-dark" id="sendButton">Send</button>
+            <p class="help is-info">{sentStatus}</p>
           </div>
         </form>
       </div>

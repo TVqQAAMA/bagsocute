@@ -75,13 +75,13 @@
           <div class="field">
             <label for="email" class="label">Email</label>
             <div class="control">
-              <input type="email" class="input" id="email" required bind:value="{email}" />
+              <input disabled="{signInDisabled}" type="email" class="input" id="email" required bind:value="{email}" />
             </div>
           </div>
           <div class="field">
             <label for="password" class="label">Password</label>
             <div class="control">
-              <input type="password" class="input" id="password" required bind:value="{password}" />
+              <input disabled="{signInDisabled}" type="password" class="input" id="password" required bind:value="{password}" />
             </div>
           </div>
           <a class="help is-info" href="/forgot">Forgot your password?</a>

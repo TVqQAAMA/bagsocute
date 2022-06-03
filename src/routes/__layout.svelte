@@ -88,6 +88,7 @@
       <div class="navbar-start" on:click="{closeMenu}">
         <a href="/" class="navbar-item">Home </a>
         <a href="/about" class="navbar-item">About</a>
+        <a href="/contact" class="navbar-item">Contact Us</a>
       </div>
 
       <div class="navbar-end" on:click="{closeMenu}">

@@ -109,7 +109,7 @@
                   <div class="mt-6 card is-shadowless">
                     <div class="card-content has-text-centered">
                       <p class="content has-text-weight-medium">
-                        <a href="/collections/{key}"
+                        <a class="underline" href="/collections/{key}"
                           ><span class="icon-angle-double-right" />View All</a
                         >
                       </p>
