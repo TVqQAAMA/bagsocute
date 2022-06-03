@@ -258,14 +258,23 @@ async function getLineItems(checkoutSession, v) {
 }
 
 export async function post({ request }) {
-  const v = await request.json()
+  /* const v = await request.json()
   const checkoutSession = v.data.object.id
-
-  // const checkoutSession = 'cs_test_b1yFcKSWk8hHuGPuN2NIVXPNbvKWaazy8LYMU0UnGuB0EO1mnSU90AwneA';
 
   checkout.details = v.data.object
 
-  await getLineItems(checkoutSession, false)
+  await getLineItems(checkoutSession, false) */
+
+  sgMail.setApiKey(process.env['SENDGRID'])
+
+  const msg = {
+    to: 'jaredyeo@gmail.com',
+    from: 'Bag So Cute! <info@bagsocute.com>',
+    subject: 'Order ' + checkout.invoice + ' confirmed',
+    html: 'AAA'
+  }
+
+  await sgMail.send(msg)
 
   return {
     body: {
