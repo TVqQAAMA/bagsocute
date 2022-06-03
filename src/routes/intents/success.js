@@ -12,7 +12,7 @@ const stripePromises = []
 const checkout = {}
 
 async function emailCustomer() {
-  console.dir(checkout)
+  /* console.dir(checkout)
 
   let lineItemsBody = ''
 
@@ -99,7 +99,7 @@ async function emailCustomer() {
     html: emailBody
   }
 
-  await sgMail.send(msg)
+  await sgMail.send(msg) */
 }
 
 async function commit() {
@@ -257,28 +257,16 @@ async function getLineItems(checkoutSession, v) {
   }
 }
 
-export async function post({ request }) {
-  /* const v = await request.json()
-  const checkoutSession = v.data.object.id
-
-  checkout.details = v.data.object
-
-  await getLineItems(checkoutSession, false) */
-
-  sgMail.setApiKey(process.env['SENDGRID'])
-
-  const msg = {
-    to: 'jaredyeo@gmail.com',
-    from: 'Bag So Cute! <info@bagsocute.com>',
-    subject: 'Order ' + checkout.invoice + ' confirmed',
-    html: 'AAA'
-  }
-
-  await sgMail.send(msg)
-
-  return {
-    body: {
-      response: 'ok'
+export async function post({ request, response }) {
+  try {
+    return {
+      status: 200
     }
+  } finally {
+    console.log('Start')
+    const v = await request.json()
+    const checkoutSession = v.data.object.id
+    checkout.details = v.data.object
+    await getLineItems(checkoutSession, false)
   }
 }
