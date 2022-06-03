@@ -15,7 +15,6 @@
 <script>
   import Currency from '$lib/Currency.svelte'
   import Stock from '$lib/Stock.svelte'
-  import Image from '$lib/Image.svelte'
   import { toast } from 'bulma-toast'
   import { page } from '$app/stores'
   import { store } from '$lib/store.js'

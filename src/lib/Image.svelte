@@ -18,7 +18,7 @@
 
 <div>
   {#if loaded}
-    <img loading="lazy" alt="{alt}" src="{src}" />
+    <img loading="auto" alt="{alt}" src="{src}" />
   {:else}
     <img alt="Loading" src="/loading.gif" class="loading" />
   {/if}
