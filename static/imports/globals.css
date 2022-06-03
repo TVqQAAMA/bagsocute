@@ -22,6 +22,7 @@ img {
 
 .card:hover .product-title {
   text-decoration: underline;
+  text-underline-offset: 0.1rem;
 }
 
 .product-price {
@@ -37,17 +38,16 @@ img {
   height: 1rem;
 }
 
-.navbar-item img {
-  max-height: 3rem;
-}
-
-.navbar-burger {
-  height: 5rem;
-}
-
 .card-content {
   padding-top: 0.5rem;
   font-size: 0.8rem;
 }
 
-a { color: black; }
+a {
+  color: black;
+}
+
+.underline {
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}

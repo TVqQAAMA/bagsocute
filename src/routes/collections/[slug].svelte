@@ -1,9 +1,7 @@
 <script context="module">
-  export async function load ({ session, fetch, params }) {
+  export async function load({ session, fetch, params }) {
     const slug = params.slug
-    const response = await fetch(
-      import.meta.env.VITE_WAREHOUSE_URL + '/collections/' + slug + '.json'
-    )
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/collections/' + slug + '.json')
     return {
       props: {
         session_id: session,
@@ -47,21 +45,17 @@
           <a sveltekit:prefetch href="/products/{product.handle}">
             <div class="card is-shadowless">
               <figure class="image is-square card-image">
-                <Image
-                  base={base}{product.handle}/
-                  alt={product.title}
-                  src={product.images[0]}
-                />
+                <Image alt="{product.title}" src="{base}/{product.handle}/{product.images[0]}" />
               </figure>
               <div class="card-content has-text-centered">
                 <p class="stock mb-1">
-                  <Stock qty={product.qty} />
+                  <Stock qty="{product.qty}" />
                 </p>
                 <p class="product-title has-text-weight-medium">
                   {product.title}
                 </p>
                 <p class="product-price">
-                  <Currency amount={product.price} /> SGD
+                  <Currency amount="{product.price}" /> SGD
                 </p>
               </div>
             </div>

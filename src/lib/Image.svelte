@@ -4,24 +4,31 @@
   export let src
   export let alt
 
-  $: imgTag = '<img alt="Loading" src="loading.gif" />'
+  let loaded = false
 
   onMount(() => {
     const img = new Image()
     img.src = src
 
     img.onload = () => {
-      imgTag = `<img loading="lazy" alt=${alt} src="${src}" />`
-    }
-    img.onerror = () => {
-  
+      loaded = true
     }
   })
 </script>
 
-<picture>
-  {@html imgTag}
-</picture>
+<div>
+  {#if loaded}
+    <img loading="lazy" alt="{alt}" src="{src}" />
+  {:else}
+    <img alt="Loading" src="/loading.gif" class="loading" />
+  {/if}
+</div>
 
 <style>
+  .loading {
+    width: 40px !important;
+    object-fit: contain;
+    margin-left: auto;
+    margin-right: auto;
+  }
 </style>

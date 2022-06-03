@@ -145,4 +145,14 @@
     position: sticky;
     top: 0;
   }
+
+  .navbar-item img {
+    max-height: 2.5rem;
+  }
+
+  .navbar-burger {
+    height: 3.5rem;
+    width: 3.5rem;
+  }
+
 </style>

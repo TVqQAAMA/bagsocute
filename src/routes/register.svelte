@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
 
-  let signUpDisabled = false
+  let signUpDisabled = true
 
   let name
   let email
@@ -16,6 +16,11 @@
     window.captchaCallback = captchaCallback
     window.handleCaptchaError = handleCaptchaError
     window.resetCaptcha = resetCaptcha
+    window.onloadCaptcha = onloadCaptcha
+
+    const captcha = document.createElement('script')
+    captcha.src = '//www.google.com/recaptcha/api.js?onload=onloadCaptcha'
+    document.head.append(captcha)
   })
 
   async function onSubmit() {
@@ -47,7 +52,7 @@
         signUpDisabled = false
         break
       case 'Compromised':
-        helpPassword = '<a href="https://haveibeenpwned.com/Passwords">Insecure password used</a>'
+        helpPassword = '<a class="underline" href="https://haveibeenpwned.com/Passwords">Insecure password used</a>'
         loading = ''
         signUpDisabled = false
         break
@@ -58,17 +63,17 @@
   }
 
   function handleCaptchaError() {
-    window.location = '/login'
+    window.location = '/register'
   }
 
   function resetCaptcha() {
     window.grecaptcha.reset()
   }
-</script>
 
-<svelte:head>
-  <script src="//www.google.com/recaptcha/api.js"></script>
-</svelte:head>
+  function onloadCaptcha() {
+    signUpDisabled = false
+  }
+</script>
 
 <div class="g-recaptcha" data-sitekey="{RECAPTCHA_SITE_KEY}" data-callback="captchaCallback" data-size="invisible"></div>
 

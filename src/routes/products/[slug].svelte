@@ -55,9 +55,9 @@
       }
     })
 
-    main.sync(thumbnails)
     main.mount()
     thumbnails.mount()
+    main.sync(thumbnails)
   })
 
   if (browser) {
@@ -136,7 +136,7 @@
               {#each product.images as image}
                 <li class="splide__slide">
                   <figure class="image">
-                    <Image base={base} alt={product.title} src={image} />
+                    <img alt={product.title} src={base}{image} />
                   </figure>
                 </li>
               {/each}
@@ -150,7 +150,7 @@
               {#each product.images as image}
                 <li class="splide__slide">
                   <figure class="image">
-                    <Image base={base} alt={product.title} src={image} />
+                    <img alt={product.title} src={base}{image} />
                   </figure>
                 </li>
               {/each}
@@ -222,4 +222,7 @@
 </section>
 
 <style>
+.splide__slide img {
+  object-fit: cover;
+}
 </style>

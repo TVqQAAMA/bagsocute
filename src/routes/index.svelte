@@ -52,8 +52,7 @@
           768: {
             perPage: 2,
             drag: true,
-            padding: { right: '2.5rem' },
-            lazyLoad: true
+            padding: { right: '2.5rem' }
           }
         },
         arrows: false,
@@ -126,7 +125,7 @@
         <div
           class="see-more content has-text-right has-text-weight-medium see-more is-capitalized mt-2"
         >
-          <a href="/collections/{key}"
+          <a href="/collections/{key}" class="underline"
             ><span class="icon-angle-double-right" />See More {key}</a
           >
         </div>
