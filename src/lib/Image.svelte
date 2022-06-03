@@ -1,15 +1,27 @@
 <script>
+  import { onMount } from 'svelte'
+
   export let src
   export let alt
-  export let base
+
+  $: imgTag = '<img alt="Loading" src="loading.gif" />'
+
+  onMount(() => {
+    const img = new Image()
+    img.src = src
+
+    img.onload = () => {
+      imgTag = `<img loading="lazy" alt=${alt} src="${src}" />`
+    }
+    img.onerror = () => {
   
-  const fileBase = src.slice(0, -5)
+    }
+  })
 </script>
 
-<picture>                      
-  <img loading="lazy" alt={alt} src="{base}{fileBase}.webp" />
+<picture>
+  {@html imgTag}
 </picture>
 
 <style>
-
 </style>

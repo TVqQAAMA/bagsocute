@@ -24,6 +24,10 @@ img {
   text-decoration: underline;
 }
 
+.product-price {
+  letter-spacing: 1.1px;
+}
+
 * {
   font-display: swap;
 }
@@ -36,3 +40,14 @@ img {
 .navbar-item img {
   max-height: 3rem;
 }
+
+.navbar-burger {
+  height: 5rem;
+}
+
+.card-content {
+  padding-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+a { color: black; }

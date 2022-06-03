@@ -40,7 +40,7 @@
 
 <section class="section">
   <div class="container">
-    <h1 class="title is-capitalized">{slug}</h1>
+    <h2 class="subtitle has-text-weight-medium is-capitalized">{slug}</h2>
     <div class="columns is-multiline mt-6 is-mobile">
       {#each products as product}
         <div class="column is-one-fifth-desktop is-half-mobile">

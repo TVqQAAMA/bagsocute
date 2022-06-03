@@ -1,13 +1,9 @@
 <script>
-  import { page } from '$app/stores'
   import { onMount } from 'svelte'
 
   let email
-  let password
-  let signInDisabled = true
+  let forgotDisabled = true
   let loading = ''
-
-  const gotoCart = $page.url.searchParams.has('cart')
   const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
 
   onMount(() => {
@@ -17,18 +13,18 @@
     window.onloadCaptcha = onloadCaptcha
   })
 
-  async function onSubmit() {
+  function onSubmit() {
     // eslint-disable-next-line no-undef
     grecaptcha.execute()
   }
 
   async function captchaCallback(token) {
     window.grecaptcha.reset()
-  
-    signInDisabled = true
+
+    forgotDisabled = true
     loading = 'is-loading'
-  
-    const login = await fetch('/intents/login', {
+
+    /* const login = await fetch('/intents/login', {
       method: 'POST',
       body: JSON.stringify({ u: email, p: password }),
       headers: {
@@ -44,11 +40,11 @@
       } else {
         window.location = '/'
       }
-    }
+    } */
   }
 
   function handleCaptchaError() {
-    window.location = '/login'
+    window.location = '/forgot'
   }
 
   function resetCaptcha() {
@@ -56,7 +52,7 @@
   }
 
   function onloadCaptcha() {
-    signInDisabled = false
+    forgotDisabled = false
   }
 </script>
 
@@ -70,26 +66,19 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-half">
-        <h1 class="title is-centered has-text-centered">Login</h1>
+        <h1 class="title is-centered has-text-centered">Reset your password</h1>
+        <h3 class="is-centered has-text-centered mb-6">We will send you an email to reset your password</h3>
         <form id="loginForm" on:submit|preventDefault="{onSubmit}">
           <div class="field">
-            <label for="email" class="label">Email</label>
             <div class="control">
-              <input type="email" class="input" id="email" required bind:value="{email}" />
+              <input type="email" placeholder="Email" class="input" id="email" required bind:value="{email}" />
             </div>
           </div>
-          <div class="field">
-            <label for="password" class="label">Password</label>
-            <div class="control">
-              <input type="password" class="input" id="password" required bind:value="{password}" />
-            </div>
-          </div>
-          <a class="help is-info" href="/forgot">Forgot your password?</a>
-          <div class="mt-5 control has-text-centered">
-            <button disabled="{signInDisabled}" class="{loading} button is-dark">Sign in</button>
+          <div class="mt-6 control has-text-centered">
+            <button disabled="{forgotDisabled}" class="{loading} button is-dark">Submit</button>
           </div>
           <div class="block has-text-centered mt-3">
-            <a class="help is-info" href="/register">Create account</a>
+            <a class="help is-info" href="/login">Cancel</a>
           </div>
         </form>
       </div>

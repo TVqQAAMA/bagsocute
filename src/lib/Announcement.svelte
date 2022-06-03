@@ -34,5 +34,6 @@
   #announcement {
     background: -webkit-linear-gradient(45deg, orange, #ff69b4);
     padding: 0.5rem;
+    font-size: 0.8rem;
   }
 </style>

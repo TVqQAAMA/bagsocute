@@ -85,9 +85,8 @@
                   <div class="card is-shadowless">
                     <figure class="image is-square card-image">
                       <Image
-                        base="{base}/{product.handle}/"
                         alt={product.title}
-                        src={product.images[0]}
+                        src={base}/{product.handle}/{product.images[0]}
                       />
                     </figure>
                     <div class="card-content has-text-centered">
