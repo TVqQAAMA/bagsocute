@@ -15,6 +15,7 @@ async function go(request) {
   const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
   const mainReq = await fetch(mainUrl, {
     headers: {
+      'Cache-Control': 'no-store',
       Authorization: `token ${process.env['GIT']}`
     }
   })
@@ -25,6 +26,7 @@ async function go(request) {
   const productUrl = `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/products/${handle}/product.json`
   const productReq = await fetch(productUrl, {
     headers: {
+      'Cache-Control': 'no-store',
       Authorization: `token ${process.env['GIT']}`
     }
   })
@@ -45,6 +47,7 @@ async function go(request) {
     method: 'POST',
     body: JSON.stringify(productBlobPayload),
     headers: {
+      'Cache-Control': 'no-store',
       Authorization: `token ${process.env['GIT']}`
     }
   })
@@ -60,8 +63,8 @@ async function go(request) {
   // get existing index.json
   const indexApiUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/index.json'
   const indexReq = await fetch(indexApiUrl, {
-    cache: 'no-store',
     headers: {
+      'Cache-Control': 'no-store',
       Authorization: `token ${process.env['GIT']}`
     }
   })
@@ -81,6 +84,7 @@ async function go(request) {
     method: 'POST',
     body: JSON.stringify(indexBlobPayload),
     headers: {
+      'Cache-Control': 'no-store',
       Authorization: `token ${process.env['GIT']}`
     }
   })
@@ -98,6 +102,7 @@ async function go(request) {
     return await fetch(collectionUrl, {
       cache: 'no-store',
       headers: {
+        'Cache-Control': 'no-store',
         Authorization: `token ${process.env['GIT']}`
       }
     })
@@ -124,6 +129,7 @@ async function go(request) {
       method: 'POST',
       body: JSON.stringify(collectionBlobPayload),
       headers: {
+        'Cache-Control': 'no-store',
         Authorization: `token ${process.env['GIT']}`
       }
     })
@@ -139,6 +145,7 @@ async function go(request) {
       const baseTreeUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/trees/main'
       const baseTreeReq = await fetch(baseTreeUrl, {
         headers: {
+          'Cache-Control': 'no-store',
           Authorization: `token ${process.env['GIT']}`
         }
       })
@@ -154,6 +161,7 @@ async function go(request) {
         method: 'POST',
         body: JSON.stringify(createTreePayload),
         headers: {
+          'Cache-Control': 'no-store',
           Authorization: `token ${process.env['GIT']}`
         }
       })
@@ -170,6 +178,7 @@ async function go(request) {
         method: 'POST',
         body: JSON.stringify(commitPayload),
         headers: {
+          'Cache-Control': 'no-store',
           Authorization: `token ${process.env['GIT']}`
         }
       })
@@ -183,6 +192,7 @@ async function go(request) {
         method: 'PATCH',
         body: JSON.stringify({ sha: commit.sha }),
         headers: {
+          'Cache-Control': 'no-store',
           Authorization: `token ${process.env['GIT']}`
         }
       })
