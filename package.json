@@ -1,0 +1,35 @@
+{
+  "name": "svelte-shop",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "svelte-kit dev",
+    "build": "svelte-kit build",
+    "package": "svelte-kit package",
+    "preview": "svelte-kit preview",
+    "prepare": "svelte-kit sync"
+  },
+  "devDependencies": {
+    "@stripe/stripe-js": "^1.29.0",
+    "@sveltejs/adapter-auto": "next",
+    "@sveltejs/kit": "next",
+    "eslint": "^8.16.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-svelte3": "^4.0.0"
+  },
+  "type": "module",
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "@splidejs/splide": "^4.0.6",
+    "@sveltejs/adapter-netlify": "^1.0.0-next.58",
+    "animate.css": "^4.1.1",
+    "bcrypt": "^5.0.1",
+    "bulma-toast": "^2.4.1",
+    "cookie": "^0.5.0",
+    "dotenv": "^16.0.1",
+    "stripe": "^9.1.0",
+    "svelte": "^3.44.0"
+  }
+}
