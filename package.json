@@ -21,7 +21,10 @@
   },
   "type": "module",
   "dependencies": {
+<<<<<<< HEAD
     "@octokit/core": "^3.6.0",
+=======
+>>>>>>> 2b7b3cc9ffd55c13835f026c6cc156e677ed5fd2
     "@sendgrid/mail": "^7.7.0",
     "@splidejs/splide": "^4.0.6",
     "@sveltejs/adapter-netlify": "^1.0.0-next.58",
@@ -30,8 +33,11 @@
     "bulma-toast": "^2.4.1",
     "cookie": "^0.5.0",
     "dotenv": "^16.0.1",
+<<<<<<< HEAD
     "install": "^0.13.0",
     "npm": "^8.12.1",
+=======
+>>>>>>> 2b7b3cc9ffd55c13835f026c6cc156e677ed5fd2
     "stripe": "^9.1.0",
     "svelte": "^3.44.0"
   }
