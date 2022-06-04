@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-export async function post({ request }) {
+async function go(request) {
   const v = await request.json()
   // console.dir(v)
   const newQty = v.data.object.metadata.qty
@@ -187,10 +187,18 @@ export async function post({ request }) {
         }
       })
       const ref = await refReq.json()
-      return {
-        status: 200,
-        body: JSON.stringify(ref)
-      }
+
+      console.log(ref)
     }
   })
+}
+
+export async function post({ request }) {
+  try {
+    return {
+      status: 200
+    }
+  } finally {
+    await go(request)
+  }
 }
