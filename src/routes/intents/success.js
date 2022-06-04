@@ -7,13 +7,9 @@ dotenv.config()
 
 const stripe = new Stripe(process.env['STRIPE_SECRET_KEY'])
 const lineItems = []
-const payload = []
-const stripePromises = []
 const checkout = {}
 
 async function emailCustomer() {
-  /* console.dir(checkout)
-
   let lineItemsBody = ''
 
   const customer = await stripe.customers.retrieve(checkout.details.customer)
@@ -23,8 +19,8 @@ async function emailCustomer() {
   )
   checkout.invoice = customer.invoice_prefix + '-' + nextInvoiceSequence
 
-  for (let i = 0; i < checkout.lineItems.length; i += 1) {
-    const amount = checkout.lineItems[i].amount_total / 100
+  for (let i = 0; i < lineItems.length; i += 1) {
+    const amount = lineItems[i].amount_total / 100
     const formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: checkout.details.currency
@@ -32,8 +28,8 @@ async function emailCustomer() {
     const renderedAmount = formatter.format(amount)
     lineItemsBody += `
       <tr>
-        <td>${checkout.lineItems[i].description}</td>
-        <td>${checkout.lineItems[i].quantity}</td>
+        <td>${lineItems[i].description}</td>
+        <td>${lineItems[i].quantity}</td>
         <td>${renderedAmount}</td>
       </tr>
     `
@@ -99,134 +95,7 @@ async function emailCustomer() {
     html: emailBody
   }
 
-  await sgMail.send(msg) */
-}
-
-async function commit() {
-  await fetch(payload[0].url, {
-    method: 'PUT',
-    body: JSON.stringify({
-      message: '[skip ci]',
-      commiter: { name: '', email: '' },
-      content: payload[0].payload,
-      sha: payload[0].hash
-    }),
-    headers: {
-      Authorization: `token ${process.env['GIT']}`
-    }
-  })
-
-  payload.shift()
-  if (payload.length === 0) {
-    await Promise.all(stripePromises)
-    await emailCustomer()
-  } else {
-    commit()
-  }
-}
-
-async function processLineItems() {
-  let res
-
-  const productJsons = {}
-  const pathToHash = {}
-
-  // console.log(lineItems);
-
-  checkout.lineItems = lineItems
-
-  let cart = []
-  for (let i = 0; i < lineItems.length; i += 1) {
-    cart.push(stripe.products.retrieve(lineItems[i].price.product))
-  }
-
-  cart = await Promise.all(cart)
-  // checkout.cart = cart
-  // console.log(cart);
-
-  // get current qty from warehouse, store in productQtyMap
-  let urls = []
-
-  for (let i = 0; i < cart.length; i += 1) {
-    const { handle } = cart[i].metadata
-    const url = process.env['VITE_WAREHOUSE_URL']
-    const path = `docs/products/${handle}/product.json`
-    urls.push(`${url}/products/${handle}/product.json`)
-    pathToHash[path] = {
-      url: `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/${path}`,
-      product_id: cart[i].id,
-      hash: ''
-    }
-  }
-
-  res = await Promise.all(urls.map(async (url) => {
-    const resp = await fetch(url, {
-      cache: 'no-store'
-    })
-    return resp.text()
-  }))
-
-  for (let i = 0; i < res.length; i += 1) {
-    const o = JSON.parse(res[i])
-    productJsons[o.id] = o
-  }
-
-  // console.log(productJsons);
-
-  // get the hashes of the files
-  urls = []
-  Object.keys(pathToHash).forEach((key) => {
-    urls.push(pathToHash[key].url)
-  })
-
-  // console.log(urls);
-
-  res = await Promise.all(urls.map(async (url) => {
-    const resp = await fetch(url, {
-      cache: 'no-store',
-      headers: {
-        Authorization: `token ${process.env['GIT']}`
-      }
-    })
-    return resp.json()
-  }))
-
-  for (let i = 0; i < res.length; i += 1) {
-    pathToHash[res[i].path].hash = res[i].sha
-  }
-
-  Object.keys(pathToHash).forEach((key) => {
-    productJsons[pathToHash[key].product_id].hash = pathToHash[key].hash
-    productJsons[pathToHash[key].product_id].url = pathToHash[key].url
-  })
-
-  // update the new qtys
-  for (let i = 0; i < lineItems.length; i += 1) {
-    const productId = lineItems[i].price.product
-    const qtyToRemove = parseInt(lineItems[i].quantity, 10)
-    const currentQty = parseInt(productJsons[productId].qty, 10)
-    productJsons[productId].qty = parseInt(currentQty - qtyToRemove, 10)
-    console.log(currentQty, qtyToRemove, parseInt(currentQty - qtyToRemove, 10))
-    stripePromises.push(
-      stripe.products.update(
-        productId,
-        { metadata: { qty: parseInt(currentQty - qtyToRemove, 10) } }
-      )
-    )
-  }
-
-  // update the warehouse
-  Object.keys(productJsons).forEach((key) => {
-    const payloadString = productJsons[key]
-    const buff = Buffer.from(JSON.stringify(payloadString), 'utf-8')
-    payload.push({
-      hash: productJsons[key].hash,
-      payload: buff.toString('base64'),
-      url: productJsons[key].url
-    })
-  })
-
-  commit()
+  await sgMail.send(msg)
 }
 
 async function getLineItems(checkoutSession, v) {
@@ -253,7 +122,33 @@ async function getLineItems(checkoutSession, v) {
   if (res.has_more) {
     getLineItems(checkoutSession, res.data[res.data.length - 1].id)
   } else {
-    processLineItems()
+    console.dir(lineItems)
+    const o = {}
+
+    let promises = []
+    for (let i = 0; i < lineItems.length; i += 1) {
+      promises.push(stripe.products.retrieve(lineItems[i].price.product))
+      o[lineItems[i].price.product] = { qtyToRemove: lineItems[i].quantity, currentQty: '' }
+    }
+
+    const productList = await Promise.all(promises)
+    console.dir(productList)
+
+    for (let i = 0; i < productList.length; i += 1) {
+      o[productList[i].id].currentQty = parseInt(productList[i].metadata.qty, 10)
+    }
+
+    console.dir(o)
+
+    promises = []
+    Object.keys(o).forEach((key) => {
+      const newQty = o[key].currentQty - o[key].qtyToRemove
+      promises.push(stripe.products.update(key, { metadata: { qty: newQty } }))
+    })
+
+    await Promise.all(promises)
+
+    await emailCustomer()
   }
 }
 
@@ -263,10 +158,10 @@ export async function post({ request, response }) {
       status: 200
     }
   } finally {
-    console.log('Start')
     const v = await request.json()
-    const checkoutSession = v.data.object.id
+    // console.dir(v)
+    // console.dir(v.data.object.customer_details)
     checkout.details = v.data.object
-    await getLineItems(checkoutSession, false)
+    await getLineItems(v.data.object.id, false)
   }
 }
