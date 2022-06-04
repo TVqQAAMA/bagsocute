@@ -152,7 +152,7 @@ async function getLineItems(checkoutSession, v) {
   }
 }
 
-export async function post({ request, response }) {
+export async function post({ request }) {
   try {
     return {
       status: 200
