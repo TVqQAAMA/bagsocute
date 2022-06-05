@@ -210,6 +210,6 @@ exports.handler = async function (event, request) {
       body: JSON.stringify(event)
     }
   } finally {
-    // await go(request)
+    await go(event.body)
   }
 }
