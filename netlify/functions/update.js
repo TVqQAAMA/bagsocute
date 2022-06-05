@@ -1,7 +1,7 @@
 
 /* eslint-disable dot-notation */
 import dotenv from 'dotenv'
-import fetch from 'node-fetch'
+import axios from 'axios'
 
 dotenv.config()
 
@@ -194,7 +194,7 @@ exports.handler = async function (event) {
       body: JSON.stringify(event)
     }
   } finally {
-    console.log(event.body)
+    // console.log(event.body)
     const v = JSON.parse(event.body)
     // console.dir(v)
     const newQty = v.data.object.metadata.qty
@@ -202,14 +202,21 @@ exports.handler = async function (event) {
     const treeItems = []
 
     // get heads/main
-    const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
+
+    const mainReq = axios.get('https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main', {
+      headers: {
+        Authorization: `token ${process.env['GIT']}`
+      }
+    })
+    const main = await mainReq
+    /* const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
     const mainReq = await fetch(mainUrl, {
       headers: {
         'Cache-Control': 'no-store',
         Authorization: `token ${process.env['GIT']}`
       }
     })
-    const main = await mainReq.json()
-    console.log(main)
+    const main = await mainReq.json() */
+    console.log(main.data)
   }
 }
