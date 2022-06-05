@@ -206,7 +206,7 @@ async function go(request) {
 exports.handler = async function (event, request) {
   try {
     return {
-      status: 200,
+      statusCode: 200,
       body: JSON.stringify(request)
     }
   } finally {
