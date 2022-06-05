@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 async function go(request) {
-  const v = await request.json()
+  const v = JSON.parse(request)
   // console.dir(v)
   const newQty = v.data.object.metadata.qty
   const handle = v.data.object.metadata.handle
