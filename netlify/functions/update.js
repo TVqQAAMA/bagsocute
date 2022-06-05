@@ -1,12 +1,12 @@
 
 /* eslint-disable dot-notation */
 import dotenv from 'dotenv'
+import fetch from 'node-fetch'
 
 dotenv.config()
 
-async function go(request) {
-  const fetch = request('node-fetch').default
-  const v = JSON.parse(request)
+async function go(r) {
+  const v = JSON.parse(r)
   // console.dir(v)
   const newQty = v.data.object.metadata.qty
   const handle = v.data.object.metadata.handle
