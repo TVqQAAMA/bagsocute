@@ -1,7 +1,7 @@
 
 /* eslint-disable dot-notation */
-import dotenv from 'dotenv'
-import fetch from 'node-fetch'
+const dotenv = require('dotenv')
+const fetch = require('node-fetch')
 
 dotenv.config()
 
