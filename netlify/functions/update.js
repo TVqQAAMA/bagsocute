@@ -13,7 +13,7 @@ async function go(r) {
   const treeItems = []
 
   // get heads/main
-  const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
+  /* const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
   const mainReq = await fetch(mainUrl, {
     headers: {
       'Cache-Control': 'no-store',
@@ -201,7 +201,7 @@ async function go(r) {
 
       console.log(ref)
     }
-  })
+  }) */
 }
 
 exports.handler = async function (event, request) {
@@ -211,6 +211,13 @@ exports.handler = async function (event, request) {
       body: JSON.stringify(event)
     }
   } finally {
-    await go(event.body)
+    const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
+    const mainReq = await fetch(mainUrl, {
+      headers: {
+        'Cache-Control': 'no-store',
+        Authorization: `token ${process.env['GIT']}`
+      }
+    })
+    const main = await mainReq.json()
   }
 }
