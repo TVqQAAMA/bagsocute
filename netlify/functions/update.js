@@ -78,74 +78,90 @@ exports.handler = async function (event) {
     })
 
     // get existing collection.json(s)
-    const collectionPromises = productJson.tags.map(async (item) => {
-      const collectionUrl = `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/collections/${item}.json`
-      return axios.get(collectionUrl, { headers })
-    })
+    const collectionPromises = []
+
+    for (let i = 0; i < productJson.tags.length; i += 1) {
+      collectionPromises.push(axios.get(`https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/collections/${productJson.tags[i]}.json`, { headers }))
+    }
 
     const collectionJson = await Promise.all(collectionPromises)
 
     // update respective collection.json(s)
-    collectionJson.map(async (o, i) => {
-      const collectionRes = await o
+    const collectionBlobPromises = []
+    for (let i = 0; i < collectionJson.length; i += 1) {
+      const collectionRes = collectionJson[i]
       const collection = JSON.parse(Buffer.from(collectionRes.data.content, 'base64').toString('ascii'))
-      collection.map(async (collectionItem) => {
-        if (collectionItem.id === productJson.id) {
-          collectionItem.qty = parseInt(newQty, 10)
+
+      for (let j = 0; j < collection.length; j += 1) {
+        if (collection[j].id === productJson.id) {
+          collection[j].qty = parseInt(newQty, 10)
+          break
         }
-      })
-
+      }
       // create collection blob
-
+      collection.push({ name: collectionRes.data.name })
+      // console.log(collection)
       const collectionBlobPayload = {
         content: JSON.stringify(collection),
         encoding: 'utf-8'
       }
-      const collectionBlobReq = axios.post(blobUrl, collectionBlobPayload, { headers })
-      const collectionBlob = await collectionBlobReq
-      treeItems.push({
-        path: `docs/collections/${collectionRes.data.name}`,
-        mode: '100644',
-        type: 'blob',
-        sha: collectionBlob.data.sha
-      })
 
-      console.log(treeItems)
+      collectionBlobPromises.push(axios.post(blobUrl, collectionBlobPayload, { headers }))
+    }
 
-      if (i === collectionJson.length - 1) {
-      // get sha for base_tree
-        const baseTreeUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/trees/main'
-        const baseTreeReq = axios.get(baseTreeUrl, { headers })
-        const baseTree = await baseTreeReq
-
-        // create tree
-        const createTreeUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/trees'
-        const createTreePayload = {
-          tree: treeItems,
-          base_tree: baseTree.data.sha
+    const collectionBlob = await Promise.all(collectionBlobPromises)
+    // const updatedCollection = JSON.parse(JSON.parse(collectionBlob[0].config.data).content)
+    let collectionName
+    for (let i = 0; i < collectionBlob.length; i += 1) {
+      const content = JSON.parse(JSON.parse(collectionBlob[i].config.data).content)
+      for (let j = 0; j < content.length; j += 1) {
+        if (content[j].name !== undefined) {
+          collectionName = content[j].name
+          treeItems.push({
+            path: `docs/collections/${collectionName}`,
+            mode: '100644',
+            type: 'blob',
+            sha: collectionBlob[i].data.sha
+          })
         }
-        const createTreeReq = axios.post(createTreeUrl, createTreePayload, { headers })
-        const createTree = await createTreeReq
-
-        // commit
-        const commitUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/commits'
-        const commitPayload = {
-          tree: createTree.data.sha,
-          message: '[skip ci]',
-          parents: [main.data.object.sha]
-        }
-        const commitReq = axios.post(commitUrl, commitPayload, { headers })
-        const commit = await commitReq
-
-        // console.log(commit)
-
-        // updating the ref
-        const refUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/refs/heads/main'
-        const refReq = axios.patch(refUrl, { sha: commit.data.sha }, { headers })
-        const ref = await refReq
-
-        console.log(ref)
       }
-    })
+    }
+
+    console.log(treeItems)
+
+    // console.log(treeItems)
+
+    // get sha for base_tree
+    const baseTreeUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/trees/main'
+    const baseTreeReq = axios.get(baseTreeUrl, { headers })
+    const baseTree = await baseTreeReq
+
+    // create tree
+    const createTreeUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/trees'
+    const createTreePayload = {
+      tree: treeItems,
+      base_tree: baseTree.data.sha
+    }
+    const createTreeReq = axios.post(createTreeUrl, createTreePayload, { headers })
+    const createTree = await createTreeReq
+
+    // commit
+    const commitUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/commits'
+    const commitPayload = {
+      tree: createTree.data.sha,
+      message: '[skip ci]',
+      parents: [main.data.object.sha]
+    }
+    const commitReq = axios.post(commitUrl, commitPayload, { headers })
+    const commit = await commitReq
+
+    // console.log(commit)
+
+    // updating the ref
+    const refUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/refs/heads/main'
+    const refReq = axios.patch(refUrl, { sha: commit.data.sha }, { headers })
+    const ref = await refReq
+
+    console.log(ref)
   }
 }
