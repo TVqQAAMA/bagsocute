@@ -1,28 +1,11 @@
 
 /* eslint-disable dot-notation */
-const dotenv = require('dotenv')
-const fetch = require('node-fetch')
+import dotenv from 'dotenv'
+import fetch from 'node-fetch'
 
 dotenv.config()
 
-async function go(r) {
-  const v = JSON.parse(r)
-  // console.dir(v)
-  const newQty = v.data.object.metadata.qty
-  const handle = v.data.object.metadata.handle
-  const treeItems = []
-
-  // get heads/main
-  /* const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
-  const mainReq = await fetch(mainUrl, {
-    headers: {
-      'Cache-Control': 'no-store',
-      Authorization: `token ${process.env['GIT']}`
-    }
-  })
-  const main = await mainReq.json()
-  // console.log(main)
-
+async function go(request) {
   // get existing product.json
   const productUrl = `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/products/${handle}/product.json`
   const productReq = await fetch(productUrl, {
@@ -201,16 +184,24 @@ async function go(r) {
 
       console.log(ref)
     }
-  }) */
+  })
 }
 
-exports.handler = async function (event, request) {
+exports.handler = async function (event) {
   try {
     return {
       statusCode: 200,
       body: JSON.stringify(event)
     }
   } finally {
+    console.log(event.body)
+    const v = JSON.parse(event.body)
+    // console.dir(v)
+    const newQty = v.data.object.metadata.qty
+    const handle = v.data.object.metadata.handle
+    const treeItems = []
+
+    // get heads/main
     const mainUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/git/ref/heads/main'
     const mainReq = await fetch(mainUrl, {
       headers: {
@@ -219,5 +210,6 @@ exports.handler = async function (event, request) {
       }
     })
     const main = await mainReq.json()
+    console.log(main)
   }
 }
