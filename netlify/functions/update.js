@@ -207,7 +207,7 @@ exports.handler = async function (event, request) {
   try {
     return {
       statusCode: 200,
-      body: JSON.stringify(request)
+      body: JSON.stringify(event)
     }
   } finally {
     // await go(request)
