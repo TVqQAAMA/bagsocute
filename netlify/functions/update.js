@@ -203,12 +203,13 @@ async function go(request) {
   })
 }
 
-export async function post({ request }) {
+exports.handler = async function (event, request) {
   try {
     return {
-      status: 200
+      status: 200,
+      body: request
     }
   } finally {
-    await go(request)
+    // await go(request)
   }
 }
