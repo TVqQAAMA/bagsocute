@@ -1,15 +1,14 @@
 <script context="module">
   export async function load ({ session, fetch, params }) {
     const slug = params.slug
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/products/' + slug + '/product.json', {
-      headers:
-      { 'Cache-Control': 'no-store' }
-    })
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/products/' + slug + '/product.json')
   
     return {
       props: {
-        session_id: session,
         product: await response.json()
+      },
+      cache: {
+        maxage: 1
       }
     }
   }

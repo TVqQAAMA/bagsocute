@@ -1,14 +1,14 @@
 
 <script context="module">
   export async function load ({ fetch }) {
-    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/index.json', {
-      headers:
-      { 'Cache-Control': 'no-store' }
-    })
+    const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/index.json')
 
     return {
       props: {
         products: await response.json()
+      },
+      cache: {
+        maxage: 1
       }
     }
   }
