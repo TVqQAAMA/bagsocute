@@ -28,7 +28,7 @@ export async function post({ request }) {
     // console.log(main)
 
     // get existing product.json
-    const productUrl = `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/products/${handle}/product.json`
+    const productUrl = `https://api.github.com/repos/TVqQAAMA/bagsocute/contents/cdn/products/${handle}/product.json`
     const productReq = await fetch(productUrl, {
       headers: {
         Authorization: `token ${process.env['GIT']}`
@@ -56,14 +56,14 @@ export async function post({ request }) {
 
     const productBlob = await productBlobReq.json()
     treeItems.push({
-      path: `docs/products/${handle}/product.json`,
+      path: `cdn/products/${handle}/product.json`,
       mode: '100644',
       type: 'blob',
       sha: productBlob.sha
     })
 
     // get existing index.json
-    const indexApiUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/index.json'
+    const indexApiUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/contents/cdn/index.json'
     const indexReq = await fetch(indexApiUrl, {
       cache: 'no-store',
       headers: {
@@ -92,7 +92,7 @@ export async function post({ request }) {
 
     const indexBlob = await indexBlobReq.json()
     treeItems.push({
-      path: 'docs/index.json',
+      path: 'cdn/index.json',
       mode: '100644',
       type: 'blob',
       sha: indexBlob.sha
@@ -102,7 +102,7 @@ export async function post({ request }) {
     const collectionPromises = []
 
     for (let i = 0; i < productJson.tags.length; i += 1) {
-      collectionPromises.push(fetch(`https://api.github.com/repos/TVqQAAMA/bagsocute/contents/docs/collections/${productJson.tags[i]}.json`, { headers }))
+      collectionPromises.push(fetch(`https://api.github.com/repos/TVqQAAMA/bagsocute/contents/cdn/collections/${productJson.tags[i]}.json`, { headers }))
     }
 
     const collectionJson = await Promise.all(collectionPromises)
@@ -135,13 +135,13 @@ export async function post({ request }) {
 
     const collectionBlob = await Promise.all(collectionBlobPromises)
 
-    console.log(collectionBlob)
+    // console.log(collectionBlob)
 
     for (let i = 0; i < collectionBlob.length; i += 1) {
       const response = await collectionBlob[i].json()
 
       treeItems.push({
-        path: `docs/collections/${productJson.tags[i]}.json`,
+        path: `cdn/collections/${productJson.tags[i]}.json`,
         mode: '100644',
         type: 'blob',
         sha: response.sha
@@ -200,6 +200,6 @@ export async function post({ request }) {
       }
     })
     const ref = await refReq.json()
-    console.log(ref)
+    // console.log(ref)
   }
 }
