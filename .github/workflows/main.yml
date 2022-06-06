@@ -1,9 +1,25 @@
 name: Sync Github CDN to S3
 
-on:
-  push:
-    branches:
-    - main
+on: 
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+        - info
+        - warning
+        - debug 
+      tags:
+        description: 'Sync'
+        required: false 
+        type: boolean
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true 
 
 jobs:
   deploy:
