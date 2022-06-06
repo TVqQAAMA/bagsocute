@@ -2,8 +2,8 @@ name: Sync Github CDN to S3
 
 on:
   push:
-    branches:
-    - main
+    paths:
+    - cdn/**
 
 jobs:
   deploy:
