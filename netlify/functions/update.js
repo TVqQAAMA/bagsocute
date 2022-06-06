@@ -111,7 +111,7 @@ exports.handler = async function (event) {
 
     const collectionBlob = await Promise.all(collectionBlobPromises)
     // const updatedCollection = JSON.parse(JSON.parse(collectionBlob[0].config.data).content)
-    let collectionName
+    /* let collectionName
     for (let i = 0; i < collectionBlob.length; i += 1) {
       const content = JSON.parse(JSON.parse(collectionBlob[i].config.data).content)
       for (let j = 0; j < content.length; j += 1) {
@@ -162,6 +162,6 @@ exports.handler = async function (event) {
     const refReq = axios.patch(refUrl, { sha: commit.data.sha }, { headers })
     const ref = await refReq
 
-    console.log(ref)
+    console.log(ref) */
   }
 }
