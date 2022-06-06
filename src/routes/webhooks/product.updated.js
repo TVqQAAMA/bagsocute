@@ -199,7 +199,7 @@ export async function post({ request }) {
         Authorization: `token ${process.env['GIT']}`
       }
     })
-    await refReq.json()
+    const ref = await refReq
 
     // sync s3
     const workflowUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/actions/workflows/27583157/dispatches'
@@ -213,6 +213,6 @@ export async function post({ request }) {
       }
     })
 
-    await workflowReq.text()
+    const workflow = await workflowReq
   }
 }
