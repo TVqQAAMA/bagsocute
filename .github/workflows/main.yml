@@ -1,9 +1,7 @@
 name: Sync Github CDN to S3
 
-on:
-  push:
-    paths:
-    - cdn/**
+on: 
+  workflow_dispatch:
 
 jobs:
   deploy:

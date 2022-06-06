@@ -199,7 +199,20 @@ export async function post({ request }) {
         Authorization: `token ${process.env['GIT']}`
       }
     })
-    const ref = await refReq.json()
-    // console.log(ref)
+    await refReq.json()
+
+    // sync s3
+    const workflowUrl = 'https://api.github.com/repos/TVqQAAMA/bagsocute/actions/workflows/27583157/dispatches'
+    const workflowReq = await fetch(workflowUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        ref: 'main'
+      }),
+      headers: {
+        Authorization: `token ${process.env['GIT']}`
+      }
+    })
+
+    await workflowReq.text()
   }
 }
