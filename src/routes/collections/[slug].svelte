@@ -27,7 +27,7 @@
   let cart
 
   const slug = $page.params.slug
-  const base = import.meta.env.VITE_WAREHOUSE_URL + '/products/'
+  const base = import.meta.env.VITE_WAREHOUSE_URL + '/products'
 
   onMount(async () => {})
 

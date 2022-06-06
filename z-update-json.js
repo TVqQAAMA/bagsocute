@@ -23,10 +23,10 @@ async function createJsonContent () {
 
   for (let i = 0; i < stripeProducts.length; i += 1) {
     if (
-      !fs.existsSync(`./docs/products/${stripeProducts[i].metadata.handle}/`)
+      !fs.existsSync(`./cdn/products/${stripeProducts[i].metadata.handle}/`)
     ) {
       console.log(
-        `The folder docs/products/${stripeProducts[i].metadata.handle} does not exist!`
+        `The folder cdn/products/${stripeProducts[i].metadata.handle} does not exist!`
       )
       return
     }
@@ -34,7 +34,7 @@ async function createJsonContent () {
     const fsPromises = fs.promises
     readdirPromises.push(
       fsPromises.readdir(
-        `./docs/products/${stripeProducts[i].metadata.handle}`,
+        `./cdn/products/${stripeProducts[i].metadata.handle}`,
         {
           withFileTypes: true
         }
@@ -70,13 +70,13 @@ async function createJsonContent () {
     }
 
     fs.writeFile(
-      `./docs/products/${stripeProducts[i].metadata.handle}/product.json`,
+      `./cdn/products/${stripeProducts[i].metadata.handle}/product.json`,
       '',
       () => {}
     )
 
     fs.appendFile(
-      `./docs/products/${stripeProducts[i].metadata.handle}/product.json`,
+      `./cdn/products/${stripeProducts[i].metadata.handle}/product.json`,
       JSON.stringify(content),
       () => {}
     )
@@ -85,8 +85,8 @@ async function createJsonContent () {
   }
 
   // write index.json
-  fs.writeFile('./docs/index.json', '', () => {})
-  fs.appendFile('./docs/index.json', JSON.stringify(index), () => {})
+  fs.writeFile('./cdn/index.json', '', () => {})
+  fs.appendFile('./cdn/index.json', JSON.stringify(index), () => {})
 
   // create collection jsons
   const tags = {}
@@ -111,10 +111,10 @@ async function createJsonContent () {
   // eslint-disable-next-line no-restricted-syntax
   for (const key in tags) {
     if (Object.prototype.hasOwnProperty.call(tags, key)) {
-      fs.writeFile(`./docs/collections/${key}.json`, '', () => {})
+      fs.writeFile(`./cdn/collections/${key}.json`, '', () => {})
 
       fs.appendFile(
-        `./docs/collections/${key}.json`,
+        `./cdn/collections/${key}.json`,
         JSON.stringify(tags[key]),
         () => {}
       )

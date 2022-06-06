@@ -8,7 +8,7 @@ import { exec } from 'child_process'
 import fs from 'fs'
 
 fs.writeFile(
-  './docs/.gitignore',
+  './cdn/.gitignore',
   '',
   () => {}
 )

@@ -22,6 +22,13 @@ tes
 
 ### 4. Register for a Stripe account
 
+Set up an S3 bucket
+Allow PUBLIC
+Enable static website
+Request certificate from amazon with dns validation
+Create cloudfront with certificate, add alternate url
+Set up dns to point to cloudfront address
+
 ### 5. Setup Environmental Variables
 
 ### 6. (Optional) Link your custom domain
