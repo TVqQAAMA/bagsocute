@@ -16,7 +16,7 @@ fs.writeFile(
 const cmdWebp = 'node .\\z-convert-webp.js'
 const cmdPull = 'git pull'
 const cmdUpdateJson = 'node .\\z-update-json.js'
-const cmdAdd = 'git add .\\docs'
+const cmdAdd = 'git add .\\cdn'
 const cmdCommit = 'git commit -m "[skip ci]"'
 const cmdPush = 'git push origin main'
 
