@@ -3,7 +3,7 @@ name: Sync Github CDN to S3
 on:
   push:
     paths:
-    - cdn/**
+    - 'cdn/**'
 
 jobs:
   deploy:
