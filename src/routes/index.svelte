@@ -1,6 +1,5 @@
-
 <script context="module">
-  export async function load ({ fetch }) {
+  export async function load({ fetch }) {
     const response = await fetch(import.meta.env.VITE_WAREHOUSE_URL + '/index.json')
 
     return {
@@ -15,11 +14,11 @@
 </script>
 
 <script>
-  import Currency from '$lib/Currency.svelte'
+  import Currency from '$lib/components/Currency.svelte'
+  import Stock from '$lib/components/Stock.svelte'
+  import ProductImage from '$lib/components/ProductImage.svelte'
   import { Splide } from '@splidejs/splide'
   import { onMount } from 'svelte'
-  import Stock from '$lib/Stock.svelte'
-  import Image from '$lib/Image.svelte'
 
   export let products
 
@@ -78,7 +77,7 @@
       <h2 class="subtitle content has-text-weight-medium is-capitalized">
         <a href="/collections/{key}">{key}</a>
       </h2>
-      <div class="splide block" id={key}>
+      <div class="splide block" id="{key}">
         <div class="splide__track">
           <ul class="splide__list">
             {#each object as product}
@@ -86,20 +85,17 @@
                 <a sveltekit:prefetch href="products/{product.handle}">
                   <div class="card is-shadowless">
                     <figure class="image is-square card-image">
-                      <Image
-                        alt={product.title}
-                        src={base}/{product.handle}/{product.images[0]}
-                      />
+                      <ProductImage alt="{product.title}" src="{base}/{product.handle}/{product.cover}" />
                     </figure>
                     <div class="card-content has-text-centered">
                       <p class="stock mb-1">
-                        <Stock qty={product.qty} />
+                        <Stock qty="{product.qty}" />
                       </p>
                       <p class="product-title has-text-weight-medium">
                         {product.title}
                       </p>
                       <p class="product-price">
-                        <Currency amount={product.price} />
+                        <Currency amount="{product.price}" />
                       </p>
                     </div>
                   </div>
@@ -112,9 +108,7 @@
                   <div class="mt-6 card is-shadowless">
                     <div class="card-content has-text-centered">
                       <p class="content has-text-weight-medium">
-                        <a class="underline" href="/collections/{key}"
-                          ><span class="icon-angle-double-right" />View All</a
-                        >
+                        <a class="underline" href="/collections/{key}"><span class="icon-angle-double-right"></span>View All</a>
                       </p>
                     </div>
                   </div>
@@ -125,12 +119,8 @@
         </div>
       </div>
       {#if object.hasMore}
-        <div
-          class="see-more content has-text-right has-text-weight-medium see-more is-capitalized mt-2"
-        >
-          <a href="/collections/{key}" class="underline"
-            ><span class="icon-angle-double-right" />See More {key}</a
-          >
+        <div class="see-more content has-text-right has-text-weight-medium see-more is-capitalized mt-2">
+          <a href="/collections/{key}" class="underline"><span class="icon-angle-double-right"></span>See More {key}</a>
         </div>
       {/if}
     {/each}

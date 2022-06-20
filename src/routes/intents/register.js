@@ -1,9 +1,10 @@
 /* eslint-disable dot-notation */
 import Stripe from 'stripe'
 import dotenv from 'dotenv'
-import { serialize } from 'cookie'
 import bcrypt from 'bcrypt'
 import crypto from 'crypto'
+import { serialize } from 'cookie'
+import { encrypt } from '$lib/functions/crypto.js'
 
 dotenv.config()
 
@@ -47,22 +48,14 @@ export async function post ({ request }) {
     }
   })
 
-  const iv = crypto.randomBytes(16)
-  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(process.env['SK']), iv)
-  let encrypted = cipher.update(customer.id)
-  encrypted = Buffer.concat([encrypted, cipher.final()])
-  const uuid = `${iv.toString('hex')}-${encrypted.toString('hex')}`
-
-  await stripe.customers.update(customer.id, { metadata: { s: uuid } })
-
   return {
     status: 201,
     headers: {
-      'Set-Cookie': serialize('sessionId', uuid, {
+      'Set-Cookie': serialize('ssUserSession', encrypt(customer.id), {
         path: '/',
         httpOnly: true,
         sameSite: 'strict',
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         maxAge: 60 * 60 * 24 * 7 // one week
       })
     },

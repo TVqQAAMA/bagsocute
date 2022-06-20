@@ -2,12 +2,23 @@
 import dotenv from 'dotenv'
 import Stripe from 'stripe'
 import sgMail from '@sendgrid/mail'
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
+import { Blob } from 'buffer'
 
 dotenv.config()
 
 const stripe = new Stripe(process.env['STRIPE_SECRET_KEY'])
 const lineItems = []
 const checkout = {}
+const s3Client = new S3Client({ region: 'ap-southeast-1' })
+
+let promises = []
+let s3Command
+let s3Response
+let fetchResponse
+let blob
+let upload
 
 async function emailCustomer() {
   let lineItemsBody = ''
@@ -123,28 +134,106 @@ async function getLineItems(checkoutSession, v) {
     getLineItems(checkoutSession, res.data[res.data.length - 1].id)
   } else {
     console.dir(lineItems)
-    const o = {}
+    const tasks = {}
 
-    let promises = []
     for (let i = 0; i < lineItems.length; i += 1) {
       promises.push(stripe.products.retrieve(lineItems[i].price.product))
-      o[lineItems[i].price.product] = { qtyToRemove: lineItems[i].quantity, currentQty: '' }
+      tasks[lineItems[i].price.product] = { qtyToRemove: lineItems[i].quantity, handle: '', tags: [] }
     }
 
     const productList = await Promise.all(promises)
     console.dir(productList)
 
-    for (let i = 0; i < productList.length; i += 1) {
-      o[productList[i].id].currentQty = parseInt(productList[i].metadata.qty, 10)
-    }
+    // get index.json
+    s3Command = new GetObjectCommand({ Bucket: 'bagsocute', Key: 'index.json' })
+    s3Response = await s3Client.send(s3Command)
+    fetchResponse = new Response(s3Response.Body)
+    const indexJson = await fetchResponse.json()
 
-    console.dir(o)
+    Object.keys(tasks).forEach((taskKey) => {
+      Object.keys(indexJson).forEach((indexKey) => {
+        if (taskKey === indexJson[indexKey].id) {
+          indexJson[indexKey].qty = indexJson[indexKey].qty - tasks[taskKey].qtyToRemove
+          tasks[taskKey].handle = indexKey
+        }
+      })
+    })
+
+    // update index.json
+    blob = new Blob([JSON.stringify(indexJson)], { type: 'text/plain' })
+
+    upload = new Upload({
+      client: s3Client,
+      params: { Bucket: 'bagsocute', Key: 'index.json', Body: blob }
+    })
+
+    await upload.done()
+
+    // get product.json
+    promises = []
+    Object.keys(tasks).forEach((taskKey) => {
+      s3Command = new GetObjectCommand({ Bucket: 'bagsocute', Key: `products/${tasks[taskKey].handle}/product.json` })
+      promises.push(s3Client.send(s3Command))
+    })
+    const productRes = await Promise.all(promises)
 
     promises = []
-    Object.keys(o).forEach((key) => {
-      const newQty = o[key].currentQty - o[key].qtyToRemove
-      promises.push(stripe.products.update(key, { metadata: { qty: newQty } }))
+    for (let i = 0; i < productRes.length; i += 1) {
+      fetchResponse = new Response(productRes[i].Body)
+      const productJson = await fetchResponse.json()
+      Object.keys(tasks).forEach((taskKey) => {
+        if (taskKey === productJson.id) {
+          productJson.qty = productJson.qty - tasks[taskKey].qtyToRemove
+          tasks[taskKey].tags = productJson.tags
+          promises.push(new Upload({
+            client: s3Client,
+            params: {
+              Bucket: 'bagsocute',
+              Key: `products/${tasks[taskKey].handle}/product.json`,
+              Body: new Blob([JSON.stringify(productJson)], { type: 'text/plain' })
+            }
+          }).done())
+        }
+      })
+    }
+
+    await Promise.all(promises)
+
+    // get collections.json
+    promises = []
+    Object.keys(tasks).forEach((taskKey) => {
+      for (let i = 0; i < tasks[taskKey].tags.length; i += 1) {
+        s3Command = new GetObjectCommand({
+          Bucket: 'bagsocute',
+          Key: `collections/${tasks[taskKey].tags[i]}.json`
+        })
+        promises.push(s3Client.send(s3Command))
+      }
     })
+    const collectionRes = await Promise.all(promises)
+
+    // update collections.json
+    for (let i = 0; i < collectionRes.length; i += 1) {
+      fetchResponse = new Response(collectionRes[i].Body)
+      const collectionJson = await fetchResponse.json()
+      // console.log(collectionJson)
+      Object.keys(tasks).forEach((taskKey) => {
+        for (let j = 0; j < collectionJson.length; j += 1) {
+          if (taskKey === collectionJson[j].id) {
+            collectionJson[j].qty = collectionJson[j].qty - tasks[taskKey].qtyToRemove
+          }
+        }
+        // console.log(`collections/${tasks[taskKey].tags[i]}.json`)
+        promises.push(new Upload({
+          client: s3Client,
+          params: {
+            Bucket: 'bagsocute',
+            Key: `collections/${tasks[taskKey].tags[i]}.json`,
+            Body: new Blob([JSON.stringify(collectionJson)], { type: 'text/plain' })
+          }
+        }).done())
+      })
+    }
 
     await Promise.all(promises)
 

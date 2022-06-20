@@ -1,16 +1,8 @@
 <script context="module">
-  export async function load ({ session, fetch }) {
-    if (session !== undefined) {
-      const request = await fetch('/intents/customer', {
-        method: 'POST',
-        body: session
-      })
-
-      await request.json()
-    }
+  export async function load ({ session }) {
     return {
       props: {
-        sessionId: session
+        sessionId: session.userSession
       }
     }
   }
@@ -20,8 +12,8 @@
   import { browser } from '$app/env'
   import { loadStripe } from '@stripe/stripe-js'
   import { onMount } from 'svelte'
-  import Currency from '$lib/Currency.svelte'
-  import { store } from '$lib/store.js'
+  import Currency from '$lib/components/Currency.svelte'
+  import { store } from '$lib/functions/store.js'
   import { toast } from 'bulma-toast'
   import 'animate.css'
 
@@ -33,6 +25,13 @@
   let visibility = 'hidden'
   let loading = ''
   let grandTotal
+  let buttonText
+
+  if (sessionId === undefined) {
+    buttonText = '💳 Login'
+  } else {
+    buttonText = '💳 Check out'
+  }
 
   const toastSettings = {
     message: 'Cart updated',
@@ -216,7 +215,7 @@
                 <button
                   disabled={checkOutDisabled}
                   class="{loading} button is-warning has-text-weight-bold"
-                  >💳 Check out</button
+                  >{buttonText}</button
                 >
               </div>
             {/if}

@@ -17,9 +17,9 @@
   import { page } from '$app/stores'
   import { browser } from '$app/env'
   import { onMount } from 'svelte'
-  import Image from '$lib/Image.svelte'
-  import Currency from '$lib/Currency.svelte'
-  import Stock from '$lib/Stock.svelte'
+  import ProductImage from '$lib/components/ProductImage.svelte'
+  import Currency from '$lib/components/Currency.svelte'
+  import Stock from '$lib/components/Stock.svelte'
   import '@splidejs/splide/css'
 
   export let products
@@ -47,7 +47,7 @@
           <a sveltekit:prefetch href="/products/{product.handle}">
             <div class="card is-shadowless">
               <figure class="image is-square card-image">
-                <Image alt="{product.title}" src="{base}/{product.handle}/{product.images[0]}" />
+                <ProductImage alt="{product.title}" src="{base}/{product.handle}/{product.cover}" />
               </figure>
               <div class="card-content has-text-centered">
                 <p class="stock mb-1">

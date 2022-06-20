@@ -1,5 +1,5 @@
 <script>
-  import { store } from '$lib/store.js'
+  import { store } from '$lib/functions/store.js'
   import { browser } from '$app/env'
 
   let cart

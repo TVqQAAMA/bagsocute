@@ -52,7 +52,7 @@
         signUpDisabled = false
         break
       case 'Compromised':
-        helpPassword = '<a class="underline" href="https://haveibeenpwned.com/Passwords">Insecure password used</a>'
+        helpPassword = '<span class="icon-warning-empty pr-1"></span><a class="underline" href="https://haveibeenpwned.com/Passwords">Insecure password used</a>'
         loading = ''
         signUpDisabled = false
         break

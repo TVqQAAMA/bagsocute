@@ -5,13 +5,6 @@
 */
 
 import { exec } from 'child_process'
-import fs from 'fs'
-
-fs.writeFile(
-  './cdn/.gitignore',
-  '',
-  () => {}
-)
 
 const cmdWebp = 'node .\\z-convert-webp.js'
 const cmdPull = 'git pull'

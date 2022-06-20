@@ -15,11 +15,11 @@
 </script>
 
 <script>
-  import Currency from '$lib/Currency.svelte'
-  import Stock from '$lib/Stock.svelte'
+  import Currency from '$lib/components/Currency.svelte'
+  import Stock from '$lib/components/Stock.svelte'
   import { toast } from 'bulma-toast'
   import { page } from '$app/stores'
-  import { store } from '$lib/store.js'
+  import { store } from '$lib/functions/store.js'
   import { browser } from '$app/env'
   import { Splide } from '@splidejs/splide'
   import { onMount } from 'svelte'

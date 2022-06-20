@@ -4,7 +4,7 @@ export async function get () {
   return {
     status: 200,
     headers: {
-      'Set-Cookie': serialize('sessionId', false, {
+      'Set-Cookie': serialize('ssUserSession', false, {
         path: '/',
         expires: new Date(0)
       })

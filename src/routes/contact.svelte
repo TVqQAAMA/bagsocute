@@ -7,6 +7,7 @@
   let name
   let email
   let comment
+  let sendButton
   let helpEmail = ''
   let loading = ''
   let sentStatus = ''
@@ -43,7 +44,7 @@
     const { response } = await register.json()
   
     if (response === 'ok') {
-      document.getElementById('sendButton').style.display = 'none'
+      sendButton.style.display = 'none'
       sentStatus = 'Message sent!'
     }
   }
@@ -95,7 +96,7 @@
           </div>
 
           <div class="mt-5 control has-text-right">
-            <button disabled="{submitDisabled}" class="{loading} button is-dark" id="sendButton">Send</button>
+            <button disabled="{submitDisabled}" class="{loading} button is-dark" id="sendButton" bind:this={sendButton}>Send</button>
             <p class="help is-info">{sentStatus}</p>
           </div>
         </form>

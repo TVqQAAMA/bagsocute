@@ -1,13 +1,6 @@
 /* Script to deploy any code changes. Excludes /docs to use less build time in Netlify */
 
 import { exec } from 'child_process'
-import fs from 'fs'
-
-fs.writeFile(
-  './cdn/.gitignore',
-  '*',
-  () => {}
-)
 
 const cmdBuild = 'npm run build'
 const cmdPull = 'git pull'

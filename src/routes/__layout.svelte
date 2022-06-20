@@ -1,8 +1,20 @@
 <script context="module">
-  export async function load({ session }) {
+  export async function load({ fetch, session }) {
+    let userSession
+    let req
+    let res
+    if (session.userSession !== undefined) {
+      req = await fetch('/intents/expiry', {
+        method: 'POST',
+        body: JSON.stringify({ session: session.userSession })
+      })
+      res = await req.json()
+      userSession = res.response
+    }
+
     return {
       props: {
-        sessionId: session
+        userSession
       }
     }
   }
@@ -10,13 +22,13 @@
 
 <script>
   import { page } from '$app/stores'
-  import { store } from '$lib/store.js'
+  import { store } from '$lib/functions/store.js'
   import { browser } from '$app/env'
   import { onMount } from 'svelte'
-  import Announcement from '$lib/Announcement.svelte'
+  import Announcement from '$lib/components/Announcement.svelte'
   import '@splidejs/splide/css'
 
-  export let sessionId
+  export let userSession
 
   let cart
   let logOutDisabled = true
@@ -95,7 +107,7 @@
         {#if $page.url.pathname !== '/thanks'}
           <a class="navbar-item desktopCart" href="/cart"><span class="icon-basket"> ({cart.total})</span></a>
 
-          {#if sessionId}
+          {#if userSession}
             <div class="navbar-item">
               <div class="buttons">
                 <button disabled="{logOutDisabled}" class="{loading} button is-light" on:click|once="{onLogout}">
@@ -155,5 +167,4 @@
     height: 3.5rem;
     width: 3.5rem;
   }
-
 </style>

@@ -28,7 +28,6 @@
 
   async function captchaCallback(token) {
     window.grecaptcha.reset()
-  
     signInDisabled = true
     loading = 'is-loading'
   

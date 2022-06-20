@@ -2,8 +2,8 @@
 import Stripe from 'stripe'
 import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
-import crypto from 'crypto'
 import { serialize } from 'cookie'
+import { encrypt } from '$lib/functions/crypto.js'
 
 dotenv.config()
 
@@ -16,26 +16,17 @@ export async function post ({ request }) {
     query: `email:'${v.u}'`
   })
 
-  if (customer.data.length === 1) {
-    if (bcrypt.compareSync(v.p, customer.data[0].metadata.p)) {
-      const iv = crypto.randomBytes(16)
-      const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(process.env['SK']), iv)
-      let encrypted = cipher.update(customer.data[0].id.toString())
-      encrypted = Buffer.concat([encrypted, cipher.final()])
-      const uuid = `${iv.toString('hex')}-${encrypted.toString('hex')}`
-
-      await stripe.customers.update(customer.data[0].id, {
-        metadata: { s: uuid }
-      })
-
+  if (customer.data.length === 1) { // customer exists
+    if (bcrypt.compareSync(v.p, customer.data[0].metadata.p)) { // password is correct
+      const uuid = encrypt(customer.data[0].id.toString())
       return {
         status: 201,
         headers: {
-          'Set-Cookie': serialize('sessionId', uuid, {
+          'Set-Cookie': serialize('ssUserSession', uuid, {
             path: '/',
             httpOnly: true,
             sameSite: 'strict',
-            secure: process.env.NODE_ENV === 'PRODUCTION',
+            secure: true,
             maxAge: 60 * 60 * 24 * 7 // one week
           })
         },

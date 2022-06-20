@@ -3,8 +3,9 @@ import { parse } from 'cookie'
 export async function handle({ event, resolve }) {
   const cookies = parse(event.request.headers.get('cookie') || '')
 
-  if (cookies.sessionId) {
-    event.locals.session = cookies.sessionId
+  if (Object.keys(cookies).length > 0) {
+    event.locals.userSession = cookies.ssUserSession
+    event.locals.adminSession = cookies.ssAdminSession
   }
 
   // console.log('Hook ' + cookies.session_id)
@@ -15,5 +16,5 @@ export async function handle({ event, resolve }) {
 }
 
 export function getSession(event) {
-  return event.locals.session
+  return event.locals
 }

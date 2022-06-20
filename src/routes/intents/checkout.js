@@ -22,6 +22,7 @@ export async function post ({ request }) {
 
   let custId = decipher.update(encryptedText)
   custId = Buffer.concat([custId, decipher.final()]).toString()
+  custId = custId.split('-')[0]
 
   const lineItems = []
 
